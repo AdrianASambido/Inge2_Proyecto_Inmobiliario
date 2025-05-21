@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Contenedor del buscador y filtros -->
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 bg-light p-4 rounded shadow">
+            <h4 class="mb-4 text-center">Buscá tu alojamiento ideal</h4>
+            <form method="GET" action="/buscar">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">País</label>
+                        <select class="form-select" name="pais" required>
+                            <option value="">Seleccioná un país</option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Uruguay">Uruguay</option>
+                            <option value="Chile">Chile</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Provincia</label>
+                        <select class="form-select" name="provincia" required>
+                            <option value="">Seleccioná una provincia</option>
+                            <option value="Buenos Aires">Buenos Aires</option>
+                            <option value="Córdoba">Córdoba</option>
+                            <option value="Santa Fe">Santa Fe</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha de entrada</label>
+                        <input type="date" class="form-control" name="fecha_entrada" required min="{{ fecha_actual }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha de salida</label>
+                        <input type="date" class="form-control" name="fecha_salida" required min="{{ fecha_actual }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cantidad de personas</label>
+                        <input type="number" class="form-control" name="personas" required min="1">
+                    </div>
+                    <div class="col-md-12 text-center mt-3">
+                        <button type="submit" class="btn btn-primary px-5">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Imagen de fondo -->
+<div class="container mt-5">
+    <img src="{{ url_for('static', filename='img/banner.jpg') }}" class="img-fluid rounded shadow" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+</div>
+
+<!-- Propiedades destacadas (más adelante acá irán los cards) -->
+<div class="container mt-5">
+    <h3 class="mb-4 text-center">Propiedades destacadas</h3>
+    <!-- Aquí podés insertar los cards dinámicamente desde Flask -->
+</div>
+
+<!-- Script para sincronizar fechas -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const entrada = document.querySelector('input[name="fecha_entrada"]');
+        const salida = document.querySelector('input[name="fecha_salida"]');
+
+        entrada.addEventListener('change', function () {
+            salida.min = entrada.value;
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Encargado</title>
+</head>
+<body>
+    <h2>Iniciar sesión como Encargado</h2>
+
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li style="color:red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Formulario de login -->
+    <form method="POST" action="{{ url_for('login') }}">
+        <label>Email:</label>
+        <input type="email" name="email" required><br><br>
+
+        <label>Contraseña:</label>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Iniciar sesión</button>
+    </form>
+</body>
+</html>
