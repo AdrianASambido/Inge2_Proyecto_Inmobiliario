@@ -1,49 +1,35 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import date
-import psycopg2 
+import psycopg2
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
-# Configuración de conexión PostgreSQL
+# Configuración PostgreSQL
 DB_HOST = "localhost"
 DB_NAME = "db_init_alquilando"
 DB_USER = "postgres"
 DB_PASSWORD = "adrianingedos"
 
-# 👉 Ruta principal que muestra la página de inicio (con logo, botones, etc.)
-
-
+# Página principal
 @app.route('/')
 def pagina_inicio():
-    hoy = date.today().isoformat()  # formato YYYY-MM-DD
+    hoy = date.today().isoformat()
     return render_template('inicio.html', fecha_actual=hoy)
 
-#@app.route('/')
-#def pagina_inicio():
-#    return render_template('inicio.html')
-
-# 👉 Ruta para el login de encargados (formulario que ya tenés en loginEncargado.html)
-@app.route('/loginEncargado', methods=['GET'])
-def login_form():
-    return render_template('loginEncargado.html')
-
-# 👉 Ruta que procesa el login del encargado
-@app.route('/loginEncargado', methods=['POST'])
+# ----------------------------------------
+# LOGIN USUARIO
+# ----------------------------------------
 @app.route('/loginUsuario', methods=['GET', 'POST'])
 def login_usuario():
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
-        
+
         try:
-            conn = psycopg2.connect(
-                host=DB_HOST,
-                database=DB_NAME,
-                user=DB_USER,
-                password=DB_PASSWORD
-            )
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
+
             cursor.execute('SELECT * FROM cliente WHERE email = %s AND password = %s', (email, password))
             cliente = cursor.fetchone()
 
@@ -59,14 +45,16 @@ def login_usuario():
             print(f"[ERROR] Error al iniciar sesión de usuario: {e}")
             flash("Error en el servidor.")
             return redirect(url_for('login_usuario'))
-        
+
         finally:
-            if 'cursor' in locals():
-                cursor.close()
-            if 'conn' in locals():
-                conn.close()
-    
-    return render_template('loginUsuario.html')
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+
+    return render_template('usuario/loginUsuario.html')
+
+# ----------------------------------------
+# REGISTRO USUARIO
+# ----------------------------------------
 @app.route('/registroUsuario', methods=['GET', 'POST'])
 def registro_usuario():
     if request.method == 'POST':
@@ -76,12 +64,7 @@ def registro_usuario():
         password = request.form.get('password', '').strip()
 
         try:
-            conn = psycopg2.connect(
-                host=DB_HOST,
-                database=DB_NAME,
-                user=DB_USER,
-                password=DB_PASSWORD
-            )
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
             cursor.execute('SELECT * FROM cliente WHERE email = %s', (email,))
@@ -102,63 +85,49 @@ def registro_usuario():
             return redirect(url_for('registro_usuario'))
 
         finally:
-            if 'cursor' in locals():
-                cursor.close()
-            if 'conn' in locals():
-                conn.close()
-    
-    return render_template('registroUsuario.html')
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
 
-def login():
-    email = request.form.get('email', '').strip()
-    password = request.form.get('password', '').strip()
-    
-    print(f"[DEBUG] Email ingresado: '{email}'")
-    print(f"[DEBUG] Password ingresado: '{password}'")
+    return render_template('usuario/registroUsuario.html')
 
-    try:
-        conn = psycopg2.connect(
-            host=DB_HOST,
-            database=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD
-        )
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM encargado WHERE email = %s', (email,))
-        usuario_por_email = cursor.fetchone()
-        print(f"[DEBUG] Usuario encontrado por email: {usuario_por_email}")
-        
-        if usuario_por_email:
-            password_almacenada = usuario_por_email[4] if len(usuario_por_email) > 4 else None
-            print(f"[DEBUG] Contraseña almacenada: '{password_almacenada}'")
-            print(f"[DEBUG] ¿Coinciden contraseñas?: {password == password_almacenada}")
-            
-            query = 'SELECT * FROM encargado WHERE email = %s AND password = %s'
-            cursor.execute(query, (email, password))
-            encargado = cursor.fetchone()
-            print(f"[DEBUG] Resultado final de la consulta: {encargado}")
-            
-            if encargado:
-                nombre = encargado[1]
-                apellido = encargado[2]
-                return f"Bienvenido {nombre} {apellido}!"
+# ----------------------------------------
+# LOGIN ENCARGADO
+# ----------------------------------------
+@app.route('/loginEncargado', methods=['GET', 'POST'])
+def login_encargado():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        try:
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT * FROM encargado WHERE email = %s', (email,))
+            usuario_por_email = cursor.fetchone()
+
+            if usuario_por_email:
+                password_almacenada = usuario_por_email[4] if len(usuario_por_email) > 4 else None
+                if password == password_almacenada:
+                    nombre = usuario_por_email[1]
+                    apellido = usuario_por_email[2]
+                    return f"Bienvenido {nombre} {apellido}!"
+                else:
+                    flash("Contraseña incorrecta.")
             else:
-                flash("Contraseña incorrecta.")
-                return redirect(url_for('login_form'))
-        else:
-            flash("El email no existe en nuestra base de datos.")
-            return redirect(url_for('login_form'))
+                flash("El email no existe en nuestra base de datos.")
 
-    except Exception as e:
-        print(f"[ERROR] Fallo de conexión o consulta: {e}")
-        flash("Error en el servidor al conectar con la base de datos.")
-        return redirect(url_for('login_form'))
-    
-    finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Fallo de conexión o consulta: {e}")
+            flash("Error en el servidor.")
+
+        finally:
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+
+    return render_template('encargado/loginEncargado.html')
+
+# ----------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True)
