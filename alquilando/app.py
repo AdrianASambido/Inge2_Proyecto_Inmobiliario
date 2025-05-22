@@ -6,10 +6,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
@@ -30,7 +30,7 @@ def login_usuario():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM cliente WHERE email = %s AND password = %s', (email, password))
+            cursor.execute('SELECT * FROM Cliente WHERE email = %s AND password = %s', (email, password))
             cliente = cursor.fetchone()
 
             if cliente:
