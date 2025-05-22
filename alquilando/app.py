@@ -6,17 +6,17 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
 def pagina_inicio():
     hoy = date.today().isoformat()
-    return render_template('inicio.html', fecha_actual=hoy)
-
+   # return render_template('inicio.html', fecha_actual=hoy)#
+    return render_template('encargado/registroEncargado.html', fecha_actual=hoy)
 # ----------------------------------------
 # LOGIN USUARIO
 # ----------------------------------------
@@ -126,6 +126,46 @@ def login_encargado():
             if 'conn' in locals(): conn.close()
 
     return render_template('encargado/loginEncargado.html')
+
+
+# ----------------------------------------
+# REGISTRO ENCARGADO
+# ----------------------------------------
+@app.route('/registroEncargado', methods=['GET', 'POST'])
+def registro_encargado():
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        apellido = request.form.get('apellido', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        try:
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT * FROM Encargado WHERE email = %s', (email,))
+            if cursor.fetchone():
+                flash("Ya existe un encargado con ese email.")
+                return redirect(url_for('registro_usuario'))
+
+            cursor.execute('INSERT INTO Encargado (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+                           (nombre, apellido, email, password))
+            conn.commit()
+
+            flash("Registro exitoso. Iniciá sesión.")
+            return redirect(url_for('login_encargado'))
+
+        except Exception as e:
+            print(f"[ERROR] Error en el registro: {e}")
+            flash("Error en el servidor.")
+            return redirect(url_for('registro_encargado'))
+
+        finally:
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+
+    return render_template('usuario/registroEncargado.html')
+
 
 # ----------------------------------------
 
