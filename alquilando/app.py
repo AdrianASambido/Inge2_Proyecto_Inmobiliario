@@ -6,17 +6,18 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = ""
-DB_NAME = ""
+DB_HOST = "localhost"
+DB_NAME = "db_init_alquilando"
 DB_USER = "postgres"
-DB_PASSWORD = "N1C0L45M0N74N4R1i$"
+DB_PASSWORD = "adrianingedos"
 
 # Página principal
 @app.route('/')
 def pagina_inicio():
     hoy = date.today().isoformat()
    # return render_template('inicio.html', fecha_actual=hoy)#
-    return render_template('administrador/registroAdministrador.html', fecha_actual=hoy)
+    return render_template('inicio.html')
+   # return render_template('administrador/registroAdministrador.html', fecha_actual=hoy)
 # ----------------------------------------
 # LOGIN USUARIO
 # ----------------------------------------
@@ -36,7 +37,9 @@ def login_usuario():
             if cliente:
                 nombre = cliente[1]
                 apellido = cliente[2]
-                return f"Bienvenido {nombre} {apellido}!"
+                return render_template('usuario/sesionIniciada.html')
+            #    return f"Bienvenido {nombre} {apellido}!"
+
             else:
                 flash("Email o contraseña incorrectos.")
                 return redirect(url_for('login_usuario'))
@@ -49,8 +52,10 @@ def login_usuario():
         finally:
             if 'cursor' in locals(): cursor.close()
             if 'conn' in locals(): conn.close()
-
+            
     return render_template('usuario/loginUsuario.html')
+#    return render_template('usuario/sesionIniciada.html')
+   
 
 # ----------------------------------------
 # REGISTRO USUARIO

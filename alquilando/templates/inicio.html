@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<!-- Imagen de fondo -->
+<div class="container mt-5">
+    <img src="{{ url_for('static', filename='img/apartment-portada.jpg') }}" class="img-fluid rounded shadow" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+</div>
 
 <!-- Contenedor del buscador y filtros -->
 <div class="container mt-4">
@@ -47,10 +51,7 @@
     </div>
 </div>
 
-<!-- Imagen de fondo -->
-<div class="container mt-5">
-    <img src="{{ url_for('static', filename='img/banner.jpg') }}" class="img-fluid rounded shadow" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
-</div>
+
 
 <!-- Propiedades destacadas (más adelante acá irán los cards) -->
 <div class="container mt-5">
