@@ -16,7 +16,7 @@ DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 def pagina_inicio():
     hoy = date.today().isoformat()
    # return render_template('inicio.html', fecha_actual=hoy)#
-    return render_template('encargado/registroEncargado.html', fecha_actual=hoy)
+    return render_template('administrador/registroAdministrador.html', fecha_actual=hoy)
 # ----------------------------------------
 # LOGIN USUARIO
 # ----------------------------------------
@@ -164,7 +164,86 @@ def registro_encargado():
             if 'cursor' in locals(): cursor.close()
             if 'conn' in locals(): conn.close()
 
-    return render_template('usuario/registroEncargado.html')
+    return render_template('encargado/registroEncargado.html')
+
+
+# ----------------------------------------
+# LOGIN ADMINISTRADOR
+# ----------------------------------------
+@app.route('/loginAdministrador', methods=['GET', 'POST'])
+def login_administrador():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        try:
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            usuario_por_email = cursor.fetchone()
+
+            if usuario_por_email:
+                password_almacenada = usuario_por_email[4] if len(usuario_por_email) > 4 else None
+                if password == password_almacenada:
+                    nombre = usuario_por_email[1]
+                    apellido = usuario_por_email[2]
+                    return f"Bienvenido {nombre} {apellido}!"
+                else:
+                    flash("Contraseña incorrecta.")
+            else:
+                flash("El email no existe en nuestra base de datos.")
+
+        except Exception as e:
+            print(f"[ERROR] Fallo de conexión o consulta: {e}")
+            flash("Error en el servidor.")
+
+        finally:
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+
+    return render_template('administrador/loginAdministrador.html')
+
+
+
+# ----------------------------------------
+# REGISTRO ADMINISTRADOR
+# ----------------------------------------
+@app.route('/registroAdministrador', methods=['GET', 'POST'])
+def registro_administrador():
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        apellido = request.form.get('apellido', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        try:
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            if cursor.fetchone():
+                flash("Ya existe un admin con ese email.")
+                return redirect(url_for('registro_administrador'))
+
+            cursor.execute('INSERT INTO Administrador (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+                           (nombre, apellido, email, password))
+            conn.commit()
+
+            flash("Registro exitoso. Iniciá sesión.")
+            return redirect(url_for('login_administrador'))
+
+        except Exception as e:
+            print(f"[ERROR] Error en el registro: {e}")
+            flash("Error en el servidor.")
+            return redirect(url_for('registro_administrador'))
+
+        finally:
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+
+    return render_template('administrador/registroAdministrador.html')
+
 
 
 # ----------------------------------------
