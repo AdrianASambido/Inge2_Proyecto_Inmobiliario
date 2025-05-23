@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Registro de Usuario</h2>
+    <h2 class="text-center">Registro de Administrador</h2>
     <p class="text-center">Completa el formulario para crear tu cuenta.</p>
 
-    <form method="POST" action="{{ url_for('registro_usuario') }}" class="mt-4">
+    <form method="POST" action="{{ url_for('registro_administrador') }}" class="mt-4">
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -29,5 +29,6 @@
         <button type="submit" class="btn btn-success w-100">Registrarse</button>
     </form>
     <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+
 </div>
 {% endblock %}

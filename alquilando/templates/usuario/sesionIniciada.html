@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-
 {% block content %}
+
 <div class="container mt-5">
-    <h2 class="text-center">Iniciar sesión - Administrador</h2>
+    <h2 class="text-center">Acabo de iniciar sesión - Como Usuario</h2>
     <p class="text-center">Bienvenido, por favor ingrese sus datos.</p>
 
-    <form method="POST" action="{{ url_for('login_encargado') }}" class="mt-4">
+    <form method="POST" action="{{ url_for('login_usuario') }}" class="mt-4">
         <div class="mb-3">
             <label for="email" class="form-label">Usuario (email)</label>
             <input type="email" class="form-control" id="email" name="email" required>
@@ -20,7 +20,7 @@
     </form>
 
     <div class="mt-3 text-center">
-        <p>¿No tienes una cuenta? <a href="{{ url_for('registro_encargado') }}">Registrarse</a></p>
+        <p>¿No tienes una cuenta? <a href="{{ url_for('registro_usuario') }}">Registrarse</a></p>
     </div>
     <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 </div>
