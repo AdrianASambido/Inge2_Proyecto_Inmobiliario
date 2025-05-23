@@ -15,8 +15,7 @@ DB_PASSWORD = "adrianingedos"
 @app.route('/')
 def pagina_inicio():
     hoy = date.today().isoformat()
-   # return render_template('inicio.html', fecha_actual=hoy)#
-    return render_template('inicio.html')
+    return render_template('inicio.html', fecha_actual=hoy)   
    # return render_template('administrador/registroAdministrador.html', fecha_actual=hoy)
 # ----------------------------------------
 # LOGIN USUARIO
