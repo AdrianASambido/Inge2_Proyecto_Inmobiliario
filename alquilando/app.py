@@ -7,9 +7,9 @@ app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
 DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_NAME = "Alquilando"
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "352011"
 
 # Página principal
 @app.route('/')
@@ -30,7 +30,7 @@ def login_usuario():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Cliente WHERE email = %s AND password = %s', (email, password))
+            cursor.execute('SELECT * FROM cliente WHERE email = %s AND password = %s', (email, password))
             cliente = cursor.fetchone()
 
             if cliente:
@@ -38,7 +38,6 @@ def login_usuario():
                 apellido = cliente[2]
                 return render_template('usuario/sesionIniciada.html')
             #    return f"Bienvenido {nombre} {apellido}!"
-
             else:
                 flash("Email o contraseña incorrectos.")
                 return redirect(url_for('login_usuario'))
@@ -147,12 +146,12 @@ def registro_encargado():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Encargado WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM encargado WHERE email = %s', (email,))
             if cursor.fetchone():
                 flash("Ya existe un encargado con ese email.")
-                return redirect(url_for('registro_usuario'))
+                return redirect(url_for('registro_encargado'))
 
-            cursor.execute('INSERT INTO Encargado (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+            cursor.execute('INSERT INTO encargado (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
                            (nombre, apellido, email, password))
             conn.commit()
 
@@ -184,7 +183,7 @@ def login_administrador():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM administrador WHERE email = %s', (email,))
             usuario_por_email = cursor.fetchone()
 
             if usuario_por_email:
@@ -225,12 +224,12 @@ def registro_administrador():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM administrador WHERE email = %s', (email,))
             if cursor.fetchone():
                 flash("Ya existe un admin con ese email.")
                 return redirect(url_for('registro_administrador'))
 
-            cursor.execute('INSERT INTO Administrador (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+            cursor.execute('INSERT INTO administrador (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
                            (nombre, apellido, email, password))
             conn.commit()
 
