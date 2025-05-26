@@ -136,7 +136,7 @@ def login_encargado():
             if 'cursor' in locals(): cursor.close()
             if 'conn' in locals(): conn.close()
 
-    return render_template('encargado/menuEncargado.html')
+    return render_template('encargado/loginEncargado.html')
 
 
 # ----------------------------------------
@@ -263,17 +263,43 @@ def registro_administrador():
 
 @app.route('/menu_encargado')
 def menu_encargado():
-    if 'usuario' in session and session['rol'] == 'encargado':
-        nombre = session['nombre']
-        return render_template('encargado/menuEncargado.html', nombre=nombre)
-    else:
-        return redirect(url_for('login'))
+    if 'nombre' not in session:
+        return redirect(url_for('login_encargado'))
+    nombre = session['nombre']
+    return render_template('encargado/menuEncargado.html', nombre=nombre)
     
 
 @app.route('/encargado/propiedades')
 def listado_propiedades():
-    # Lógica para obtener propiedades y pasarlas a la plantilla
-    return render_template('encargado/listadoPropiedades.html', propiedades=[])
+    encargado_id = session['encargado_id']
+    propiedades = []
+
+    try:
+        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT p.id, p.calle, p.dpto, p.piso, p.numero, p.cantidad_ambientes, p.petfriendly, p.listada,
+               (SELECT url FROM imagenes i WHERE i.propiedad_id = p.id LIMIT 1) AS imagen_url
+        FROM propiedades p
+        WHERE p.encargado_id = %s;
+        '''
+        cursor.execute(query, (encargado_id,))
+        propiedades = cursor.fetchall()
+
+    except Exception as e:
+        print(f"[ERROR] al consultar propiedades: {e}")
+    finally:
+        if 'cursor' in locals(): cursor.close()
+        if 'conn' in locals(): conn.close()
+
+    return render_template('encargado/listadoPropiedades.html', propiedades=propiedades)
+
+#CERRAR SESION 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login_encargado'))
 
 # ----------------------------------------
 

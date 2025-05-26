@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Propiedades</title>
+    <style>
+        .propiedad {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            width: 300px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .propiedad img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+       <header class="bg-white shadow-sm py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/logo_alquilando.jpeg') }}" alt="Logo" height="50" class="me-2">
+                <h4 class="mb-0">Alquilando</h4>
+            </div>
+        </div>
+    </header>
+    <h1>Propiedades a tu cargo</h1>
+
+    {% for p in propiedades %}
+    <div class="propiedad">
+        {% if p[8] %}
+            <img src="{{ p[8] }}" alt="Imagen de la propiedad">
+        {% else %}
+            <p><em>Sin imagen</em></p>
+        {% endif %}
+        <p><strong>Dirección:</strong> {{ p[1] }} {{ p[2] }} {{ p[3] }} {{ p[4] }}</p>
+        <p><strong>Ambientes:</strong> {{ p[5] }}</p>
+        <p><strong>Pet Friendly:</strong> {{ 'Sí' if p[6] else 'No' }}</p>
+        <p><strong>¿Listada?:</strong> {{ 'Sí' if p[7] else 'No' }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>
