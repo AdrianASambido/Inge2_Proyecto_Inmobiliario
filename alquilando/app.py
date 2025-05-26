@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import date
 import psycopg2
 
@@ -16,7 +16,8 @@ DB_PASSWORD = "adrianingedos"
 def pagina_inicio():
     hoy = date.today().isoformat()
    # return render_template('inicio.html', fecha_actual=hoy)#
-    return render_template('inicio.html')
+    #return render_template('inicio.html')
+    return render_template('encargado/registroEncargado.html', fecha_actual=hoy)
    # return render_template('administrador/registroAdministrador.html', fecha_actual=hoy)
 # ----------------------------------------
 # LOGIN USUARIO
@@ -116,7 +117,12 @@ def login_encargado():
                 if password == password_almacenada:
                     nombre = usuario_por_email[1]
                     apellido = usuario_por_email[2]
-                    return f"Bienvenido {nombre} {apellido}!"
+                    # Guardar datos en sesión
+                    session['nombre'] = nombre
+                    session['apellido'] = apellido
+                    session['rol'] = 'encargado'
+                    return redirect(url_for('menu_encargado'))
+
                 else:
                     flash("Contraseña incorrecta.")
             else:
@@ -130,7 +136,7 @@ def login_encargado():
             if 'cursor' in locals(): cursor.close()
             if 'conn' in locals(): conn.close()
 
-    return render_template('encargado/loginEncargado.html')
+    return render_template('encargado/menuEncargado.html')
 
 
 # ----------------------------------------
@@ -250,6 +256,24 @@ def registro_administrador():
     return render_template('administrador/registroAdministrador.html')
 
 
+
+# ----------------------------------------
+# MENU ENCARGADO
+# ----------------------------------------
+
+@app.route('/menu_encargado')
+def menu_encargado():
+    if 'usuario' in session and session['rol'] == 'encargado':
+        nombre = session['nombre']
+        return render_template('encargado/menuEncargado.html', nombre=nombre)
+    else:
+        return redirect(url_for('login'))
+    
+
+@app.route('/encargado/propiedades')
+def listado_propiedades():
+    # Lógica para obtener propiedades y pasarlas a la plantilla
+    return render_template('encargado/listadoPropiedades.html', propiedades=[])
 
 # ----------------------------------------
 
