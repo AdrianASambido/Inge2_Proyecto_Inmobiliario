@@ -7,9 +7,9 @@ app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
 DB_HOST = "localhost"
-DB_NAME = "Alquilando"
+DB_NAME = "db_init_alquilando"
 DB_USER = "postgres"
-DB_PASSWORD = "352011"
+DB_PASSWORD = "adrianingedos"
 
 # Página principal
 @app.route('/')
@@ -44,6 +44,7 @@ def login_usuario():
 
         except Exception as e:
             print(f"[ERROR] Error al iniciar sesión de usuario: {e}")
+            print(repr(e))  # Mostrará el tipo exacto del error
             flash("Error en el servidor.")
             return redirect(url_for('login_usuario'))
 
