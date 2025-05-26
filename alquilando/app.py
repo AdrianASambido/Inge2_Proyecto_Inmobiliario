@@ -45,6 +45,7 @@ def login_usuario():
 
         except Exception as e:
             print(f"[ERROR] Error al iniciar sesión de usuario: {e}")
+            print(repr(e))  # Mostrará el tipo exacto del error
             flash("Error en el servidor.")
             return redirect(url_for('login_usuario'))
 
@@ -272,7 +273,12 @@ def registro_administrador():
 
     return render_template('administrador/registroAdministrador.html')
 
-
+#----------------------------------------
+        #CHAT
+#----------------------------------------
+@app.route('/chat')
+def chat():
+    return render_template('usuario/chat.html')  # o lo que necesites
 
 # ----------------------------------------
 
