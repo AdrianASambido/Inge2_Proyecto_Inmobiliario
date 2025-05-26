@@ -139,6 +139,15 @@ def login_encargado():
 
     return render_template('encargado/loginEncargado.html')
 
+# ----------------------------------------
+# EDITAR PERFIL
+# ----------------------------------------
+
+@app.route('/editarPerfil')
+def editar_perfil():
+    return render_template('usuario/editarPerfil.html')
+
+
 
 # ----------------------------------------
 # REGISTRO ENCARGADO
