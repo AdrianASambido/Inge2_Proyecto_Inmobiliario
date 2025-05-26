@@ -55,6 +55,13 @@ def login_usuario():
     return render_template('usuario/loginUsuario.html')
 #    return render_template('usuario/sesionIniciada.html')
 
+@app.route('/logout')
+def logout():
+    # Lógica para cerrar sesión
+    session.clear()
+    return redirect(url_for('login_usuario'))
+
+
 # ----------------------------------------
 # REGISTRO USUARIO
 # ----------------------------------------
