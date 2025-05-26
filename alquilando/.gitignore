@@ -1,5 +1,6 @@
 # Ignorar entorno virtual
 # .gitignore
+/venv
 env/
 __pycache__/
 *.pyc
@@ -11,4 +12,5 @@ instance/
 .idea/
 *.log
 .DS_Store
+
 

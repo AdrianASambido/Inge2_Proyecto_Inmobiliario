@@ -54,7 +54,6 @@ def login_usuario():
             
     return render_template('usuario/loginUsuario.html')
 #    return render_template('usuario/sesionIniciada.html')
-   
 
 # ----------------------------------------
 # REGISTRO USUARIO
@@ -66,6 +65,14 @@ def registro_usuario():
         apellido = request.form.get('apellido', '').strip()
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
+        dni = request.form.get('dni', '').strip()
+        telefono = request.form.get('telefono', '').strip()
+        numero_tarjeta = request.form.get('numero_tarjeta', '').strip()
+        nacionalidad = request.form.get('nacionalidad', '').strip()
+
+        # Para depuración: imprimí los valores recibidos del formulario
+        print("Datos recibidos del formulario:")
+        print(nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad)
 
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
@@ -76,8 +83,8 @@ def registro_usuario():
                 flash("Ya existe un usuario con ese email.")
                 return redirect(url_for('registro_usuario'))
 
-            cursor.execute('INSERT INTO cliente (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
-                           (nombre, apellido, email, password))
+            cursor.execute('INSERT INTO cliente (nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                (nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad))
             conn.commit()
 
             flash("Registro exitoso. Iniciá sesión.")
@@ -85,6 +92,7 @@ def registro_usuario():
 
         except Exception as e:
             print(f"[ERROR] Error en el registro: {e}")
+            print(repr(e))  # Mostrará el tipo exacto del error
             flash("Error en el servidor.")
             return redirect(url_for('registro_usuario'))
 
