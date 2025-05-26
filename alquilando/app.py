@@ -7,9 +7,9 @@ app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
 DB_HOST = "localhost"
-DB_NAME = "Alquilando"
+DB_NAME = "db_init_alquilando"
 DB_USER = "postgres"
-DB_PASSWORD = "352011"
+DB_PASSWORD = "adrianingedos"
 
 # Página principal
 @app.route('/')
@@ -39,6 +39,7 @@ def login_usuario():
                 return render_template('usuario/sesionIniciada.html')
             #    return f"Bienvenido {nombre} {apellido}!"
             else:
+                print("-------------[INFO] Email o contraseña incorrectos.")
                 flash("Email o contraseña incorrectos.")
                 return redirect(url_for('login_usuario'))
 
