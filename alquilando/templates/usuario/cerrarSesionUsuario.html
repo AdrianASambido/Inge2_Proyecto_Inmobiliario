@@ -1,1 +1,21 @@
 {% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center">Su sesión se ha cerrado con exito</h2>
+    <p class="text-center">Bienvenido, por favor ingrese sus datos.</p>
+
+    <form method="POST" action="{{ url_for('login_usuario') }}" class="mt-4">
+        <div class="mb-3">
+            <label for="email" class="form-label">Sus alquileres "esto hay que corregirlo" (email)</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+    </form>
+
+    <div class="mt-3 text-center">
+        <p>¿No tienes una cuenta? <a href="{{ url_for('registro_usuario') }}">Registrarse</a></p>
+    </div>
+    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+</div>
+{% endblock %}
