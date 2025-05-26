@@ -256,7 +256,12 @@ def registro_administrador():
 
     return render_template('administrador/registroAdministrador.html')
 
-
+#----------------------------------------
+        #CHAT
+#----------------------------------------
+@app.route('/chat')
+def chat():
+    return render_template('usuario/chat.html')  # o lo que necesites
 
 # ----------------------------------------
 

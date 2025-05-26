@@ -5,23 +5,11 @@
     <h2 class="text-center">Acabo de iniciar sesión - Como Usuario</h2>
     <p class="text-center">Bienvenido, por favor ingrese sus datos.</p>
 
-    <form method="POST" action="{{ url_for('login_usuario') }}" class="mt-4">
-        <div class="mb-3">
-            <label for="email" class="form-label">Sus alquileres "esto hay que corregirlo" (email)</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">Favoritos "eso tambièn hay que corregirlo"</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-    </form>
-
+    
     <div class="mt-3 text-center">
         <p>Envía un mensaje<a href="{{ url_for('registro_usuario') }}">Chat</a></p>
     </div>
     <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 </div>
+<a href="{{ url_for('chat') }}" class="btn btn-secondary mt-3">Chatear</a>
 {% endblock %}
