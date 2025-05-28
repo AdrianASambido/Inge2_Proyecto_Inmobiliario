@@ -30,7 +30,7 @@ def login_usuario():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Cliente WHERE email = %s AND password = %s', (email, password))
+            cursor.execute('SELECT * FROM cliente WHERE email = %s AND password = %s', (email, password))
             cliente = cursor.fetchone()
 
             if cliente:
@@ -38,13 +38,14 @@ def login_usuario():
                 apellido = cliente[2]
                 return render_template('usuario/sesionIniciada.html')
             #    return f"Bienvenido {nombre} {apellido}!"
-
             else:
+                print("-------------[INFO] Email o contraseña incorrectos.")
                 flash("Email o contraseña incorrectos.")
                 return redirect(url_for('login_usuario'))
 
         except Exception as e:
             print(f"[ERROR] Error al iniciar sesión de usuario: {e}")
+            print(repr(e))  # Mostrará el tipo exacto del error
             flash("Error en el servidor.")
             return redirect(url_for('login_usuario'))
 
@@ -54,7 +55,13 @@ def login_usuario():
             
     return render_template('usuario/loginUsuario.html')
 #    return render_template('usuario/sesionIniciada.html')
-   
+
+@app.route('/logout')
+def logout():
+    # Lógica para cerrar sesión
+    session.clear()
+    return redirect(url_for('login_usuario'))
+
 
 # ----------------------------------------
 # REGISTRO USUARIO
@@ -66,6 +73,14 @@ def registro_usuario():
         apellido = request.form.get('apellido', '').strip()
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
+        dni = request.form.get('dni', '').strip()
+        telefono = request.form.get('telefono', '').strip()
+        numero_tarjeta = request.form.get('numero_tarjeta', '').strip()
+        nacionalidad = request.form.get('nacionalidad', '').strip()
+
+        # Para depuración: imprimí los valores recibidos del formulario
+        print("Datos recibidos del formulario:")
+        print(nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad)
 
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
@@ -76,8 +91,8 @@ def registro_usuario():
                 flash("Ya existe un usuario con ese email.")
                 return redirect(url_for('registro_usuario'))
 
-            cursor.execute('INSERT INTO cliente (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
-                           (nombre, apellido, email, password))
+            cursor.execute('INSERT INTO cliente (nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                (nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad))
             conn.commit()
 
             flash("Registro exitoso. Iniciá sesión.")
@@ -85,6 +100,7 @@ def registro_usuario():
 
         except Exception as e:
             print(f"[ERROR] Error en el registro: {e}")
+            print(repr(e))  # Mostrará el tipo exacto del error
             flash("Error en el servidor.")
             return redirect(url_for('registro_usuario'))
 
@@ -131,6 +147,15 @@ def login_encargado():
 
     return render_template('encargado/loginEncargado.html')
 
+# ----------------------------------------
+# EDITAR PERFIL
+# ----------------------------------------
+
+@app.route('/editarPerfil')
+def editar_perfil():
+    return render_template('usuario/editarPerfil.html')
+
+
 
 # ----------------------------------------
 # REGISTRO ENCARGADO
@@ -147,12 +172,12 @@ def registro_encargado():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Encargado WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM encargado WHERE email = %s', (email,))
             if cursor.fetchone():
                 flash("Ya existe un encargado con ese email.")
-                return redirect(url_for('registro_usuario'))
+                return redirect(url_for('registro_encargado'))
 
-            cursor.execute('INSERT INTO Encargado (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+            cursor.execute('INSERT INTO encargado (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
                            (nombre, apellido, email, password))
             conn.commit()
 
@@ -184,7 +209,7 @@ def login_administrador():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM administrador WHERE email = %s', (email,))
             usuario_por_email = cursor.fetchone()
 
             if usuario_por_email:
@@ -225,12 +250,12 @@ def registro_administrador():
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
 
-            cursor.execute('SELECT * FROM Administrador WHERE email = %s', (email,))
+            cursor.execute('SELECT * FROM administrador WHERE email = %s', (email,))
             if cursor.fetchone():
                 flash("Ya existe un admin con ese email.")
                 return redirect(url_for('registro_administrador'))
 
-            cursor.execute('INSERT INTO Administrador (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
+            cursor.execute('INSERT INTO administrador (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)',
                            (nombre, apellido, email, password))
             conn.commit()
 
@@ -248,7 +273,12 @@ def registro_administrador():
 
     return render_template('administrador/registroAdministrador.html')
 
-
+#----------------------------------------
+        #CHAT
+#----------------------------------------
+@app.route('/chat')
+def chat():
+    return render_template('usuario/chat.html')  # o lo que necesites
 
 # ----------------------------------------
 
