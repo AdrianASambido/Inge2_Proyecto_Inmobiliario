@@ -6,10 +6,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
@@ -104,7 +104,7 @@ def login_encargado():
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
-
+        print(f"[DEBUG] Email ingresado: {email}, Password ingresado: {password}")
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
@@ -121,6 +121,8 @@ def login_encargado():
                     session['nombre'] = nombre
                     session['apellido'] = apellido
                     session['rol'] = 'encargado'
+                    encargado_id = usuario_por_email[0]
+                    session['encargado_id'] = encargado_id
                     return redirect(url_for('menu_encargado'))
 
                 else:
@@ -263,10 +265,13 @@ def registro_administrador():
 
 @app.route('/menu_encargado')
 def menu_encargado():
+    print(f"[DEBUG] Accediendo a /menu_encargado, sesión: {dict(session)}")
     if 'nombre' not in session:
+        print("[DEBUG] No hay 'nombre' en sesión. Redirigiendo a login.")
         return redirect(url_for('login_encargado'))
     nombre = session['nombre']
     return render_template('encargado/menuEncargado.html', nombre=nombre)
+
     
 
 @app.route('/encargado/propiedades')
@@ -280,8 +285,8 @@ def listado_propiedades():
 
         query = '''
         SELECT p.id, p.calle, p.dpto, p.piso, p.numero, p.cantidad_ambientes, p.petfriendly, p.listada,
-               (SELECT url FROM imagenes i WHERE i.propiedad_id = p.id LIMIT 1) AS imagen_url
-        FROM propiedades p
+               (SELECT url FROM imagen i WHERE i.propiedad_id = p.id LIMIT 1) AS imagen_url
+        FROM propiedad p
         WHERE p.encargado_id = %s;
         '''
         cursor.execute(query, (encargado_id,))
