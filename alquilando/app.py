@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import date
 import psycopg2
 
@@ -6,10 +7,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
