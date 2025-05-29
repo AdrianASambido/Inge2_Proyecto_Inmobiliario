@@ -1,0 +1,11 @@
+<!-- templates/usuario/cerrarSesionUsuario.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2>Sesión cerrada correctamente</h2>
+  <p>¡Gracias por visitarnos! Esperamos verte pronto.</p>
+  <a href="{{ url_for('inicio') }}" class="btn btn-primary mt-3">Volver al inicio</a>
+</div>
+<a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+{% endblock %}
