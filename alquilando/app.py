@@ -35,6 +35,7 @@ def logout():
 
 # ----------------------------------------
 # REGISTRO USUARIO
+
 # ----------------------------------------
 @app.route('/registroUsuario', methods=['GET', 'POST'])
 def registro_usuario():
