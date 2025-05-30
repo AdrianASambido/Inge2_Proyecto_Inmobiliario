@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from datetime import date
+from datetime import datetime, timedelta, date
 import psycopg2
+import re
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
@@ -31,7 +32,16 @@ def logout():
     session.clear()
     flash("Sesión cerrada.")
     return redirect(url_for('login'))
-#    return redirect(url_for('login_usuario o inicio cualquiera'))
+
+# ----------------------------------------
+# CONTRASEÑA SEGURA
+
+# ----------------------------------------
+def es_contraseña_segura(password):
+    return (len(password) >= 8 and
+            re.search(r"[A-Z]", password) and
+            re.search(r"[a-z]", password) and
+            re.search(r"[0-9]", password))  
 
 # ----------------------------------------
 # REGISTRO USUARIO
@@ -48,6 +58,11 @@ def registro_usuario():
         telefono = request.form.get('telefono', '').strip()
         numero_tarjeta = request.form.get('numero_tarjeta', '').strip()
         nacionalidad = request.form.get('nacionalidad', '').strip()
+
+        if not es_contraseña_segura(password):
+            flash("La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.")
+            return redirect(url_for('registro_usuario'))
+
 
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
@@ -78,13 +93,25 @@ def registro_usuario():
 
     return render_template('usuario/registroUsuario.html')
 
-# ----------------------------------------
-# EDITAR PERFIL
-# ----------------------------------------
+# -------------------------------------------------------
+# RUTAS: EDITAR PERFIL, MENUENCARGADO, MENUADMINISTRADOR
+# -------------------------------------------------------
 @app.route('/editarPerfil')
 def editar_perfil():
     return render_template('usuario/editarPerfil.html')
 
+@app.route('/listado_propiedades')
+def listado_propiedades():
+    return render_template('encargado/listadoPropiedades.html')
+    return "Acá va el listado de propiedades para encargados o administradores"
+
+@app.route('/menuEncargado')
+def menu_Encargado():
+    return render_template('encargado/menuEncargado.html')
+
+@app.route('/menuAdministrador')
+def menu_Administrador():
+    return render_template('administrador/menuAdministrador.html')
 
 # ----------------------------------------
 # REGISTRO ENCARGADO
@@ -175,23 +202,34 @@ def chat():
 #-----------------------------------------
 # LOGIN DE LOS TRES USUARIOS
 #-----------------------------------------
-
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login():    
     if request.method == 'POST':
         tipo = request.form.get('tipo')
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
-
         tabla = tipo if tipo in ['cliente', 'encargado', 'administrador'] else None
         if not tabla:
             flash("Tipo de usuario inválido.")
             return redirect(url_for('login'))
 
+        ahora = datetime.now()
+        if 'intentos' not in session:
+            session['intentos'] = 0
+            session['bloqueado_hasta'] = None
+
+        if session['bloqueado_hasta']:
+            bloqueado_hasta = datetime.fromisoformat(session['bloqueado_hasta'])
+            if ahora < bloqueado_hasta:
+                flash(f"Demasiados intentos fallidos. Intentá de nuevo después de las {bloqueado_hasta.strftime('%H:%M:%S')}.")
+                return redirect(url_for('login'))
+            else:
+                session['intentos'] = 0
+                session['bloqueado_hasta'] = None
+
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
-
             cursor.execute(f"SELECT * FROM {tabla} WHERE email = %s", (email,))
             usuario = cursor.fetchone()
 
@@ -202,35 +240,31 @@ def login():
                     session['usuario_tipo'] = tipo
                     session['usuario_nombre'] = usuario[1]
                     session['usuario_apellido'] = usuario[2]
-                    return redirect(url_for('sesion_iniciada'))
+                    session['intentos'] = 0
+                    session['bloqueado_hasta'] = None
+
+                    # Redirección según tipo de usuario
+                    if tipo == 'cliente':
+                        return redirect(url_for('sesion_iniciada'))
+                    elif tipo == 'encargado':
+                        return redirect(url_for('menu_Encargado'))
+                    elif tipo == 'administrador':
+                        return redirect(url_for('menu_Administrador'))
                 else:
-                     flash("Contraseña incorrecta.")
-                     session.clear()
+                    session['intentos'] += 1
+                    if session['intentos'] >= 3:
+                        session['bloqueado_hasta'] = (ahora + timedelta(minutes=5)).isoformat()
+                        flash("Demasiados intentos. Intentalo en 5 minutos.")
+                    else:
+                        flash("Contraseña incorrecta.")
             else:
-                # Verificamos si existe en otra tabla
-                otras_tablas = ['cliente', 'encargado', 'administrador']
-                otras_tablas.remove(tabla)
-                encontrado_en_otra = False
-
-                for otra in otras_tablas:
-                    cursor.execute(f"SELECT * FROM {otra} WHERE email = %s", (email,))
-                    if cursor.fetchone():
-                        encontrado_en_otra = True
-                        flash(f"El email existe pero no corresponde al tipo seleccionado ({tipo}).")
-                        break
-
-                if not encontrado_en_otra:
-                    flash("Email no registrado.")
-                    session.clear()
-
+                flash("Email no registrado.")
         except Exception as e:
             print(f"[ERROR] Error de login: {e}")
             flash("Error del servidor.")
-
         finally:
             if 'cursor' in locals(): cursor.close()
             if 'conn' in locals(): conn.close()
-
     return render_template('login.html')
 
 #----------------------------------------
@@ -243,8 +277,6 @@ def sesion_iniciada():
     return render_template('usuario/sesionIniciada.html', 
                            tipo=session.get('usuario_tipo'),
                            nombre=session.get('usuario_nombre'))
-# ----------------------------------------
-
 #-----------------------------------------
 # RECUPERO DE CONTRASEÑA
 #-----------------------------------------
@@ -252,6 +284,5 @@ def sesion_iniciada():
 def recuperar_contraseña():
     return render_template('recuperarContraseñaDesdeEmail.html')
 #-----------------------------------------
-
 if __name__ == '__main__':
     app.run(debug=True)
