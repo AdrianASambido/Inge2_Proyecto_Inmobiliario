@@ -57,6 +57,7 @@ def solo_numeros(texto, min_len, max_len):
     return texto.isdigit() and min_len <= len(texto) <= max_len
 # ----------------------------------------
 # REGISTRO USUARIO
+
 # ----------------------------------------
 @app.route('/registroUsuario', methods=['GET', 'POST'])
 def registro_usuario():
