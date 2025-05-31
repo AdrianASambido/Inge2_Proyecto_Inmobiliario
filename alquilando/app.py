@@ -137,7 +137,7 @@ def registro_usuario():
     return render_template('usuario/registroUsuario.html')
 
 # -------------------------------------------------------
-# RUTAS: EDITAR PERFIL, MENUENCARGADO, MENUADMINISTRADOR
+# RUTAS: EDITAR PERFIL, MENUENCARGADO, MENUA DMINISTRADOR
 # -------------------------------------------------------
 @app.route('/editarPerfil')
 def editar_perfil():

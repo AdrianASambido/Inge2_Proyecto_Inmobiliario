@@ -1,39 +1,68 @@
+<!-- ESTA ES LA ULTIMA QUE ME PASO AI-->
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="container mt-4" style="max-width: 500px;">
-    <h2 class="text-center mb-3">Registro de Encargado</h2>
+    <h2 class="text-center mb-2">Registro de Usuario</h2>
+    <p class="text-center mb-3">Completa el formulario para crear tu cuenta.</p>
 
-    <form method="POST" id="registroForm" novalidate>
-        <div class="mb-3">
+    <form id="registroForm" method="POST" action="{{ url_for('registro_usuario') }}" novalidate>
+        <div class="mb-2">
             <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre">
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+            <div class="invalid-feedback">El nombre solo puede contener letras.</div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-2">
             <label for="apellido" class="form-label">Apellido</label>
-            <input type="text" class="form-control" id="apellido" name="apellido">
+            <input type="text" class="form-control" id="apellido" name="apellido" required>
+            <div class="invalid-feedback">El apellido solo puede contener letras.</div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-2">
             <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="email" name="email">
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">Correo electrónico inválido.</div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-2">
             <label for="password" class="form-label">Contraseña</label>
             <div class="input-group">
-                <input type="password" class="form-control" id="password" name="password">
-                <button type="button" class="btn btn-outline-secondary" id="togglePassword">👁</button>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">👁</button>
             </div>
+            <div class="invalid-feedback">Mínimo 8 caracteres, al menos una mayúscula y un número.</div>
+        </div>
+
+        <div class="mb-2">
+            <label for="dni" class="form-label">N° de documento/DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" required>
+            <div class="invalid-feedback">Debe tener entre 7 y 8 dígitos numéricos.</div>
+        </div>
+
+        <div class="mb-2">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="text" class="form-control" id="telefono" name="telefono" required>
+            <div class="invalid-feedback">Ingrese un teléfono válido.</div>
+        </div>
+
+        <div class="mb-2">
+            <label for="numero_tarjeta" class="form-label">N° Tarjeta de crédito</label>
+            <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" required>
+            <div class="invalid-feedback">Debe tener exactamente 16 números.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="nacionalidad" class="form-label">Nacionalidad</label>
+            <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" required>
+            <div class="invalid-feedback">Solo letras permitidas.</div>
         </div>
 
         <button type="submit" class="btn btn-success w-100">Registrarse</button>
 
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-info text-center mt-3">{{ messages[0] }}</div>
-        {% endif %}
+            {% if messages %}
+                <div class="alert alert-success text-center mt-3">{{ messages[0] }}</div>
+            {% endif %}
         {% endwith %}
     </form>
 
@@ -41,48 +70,45 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password');
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registroForm");
 
-    toggleBtn.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
+    // Mostrar / ocultar contraseña
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordInput = document.getElementById("password");
+        const type = passwordInput.type === "password" ? "text" : "password";
         passwordInput.type = type;
-        toggleBtn.textContent = type === 'password' ? '👁' : '🙈';
+        this.textContent = type === "password" ? "👁" : "🙈";
     });
 
-    // Validación manual al hacer submit (evitamos validaciones automáticas)
-    document.getElementById('registroForm').addEventListener('submit', function (e) {
-        // Limpia clases anteriores
-        ['nombre', 'apellido', 'email', 'password'].forEach(id => {
-            document.getElementById(id).classList.remove('is-invalid');
-        });
+    // Validación al enviar
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const campos = [
+            { id: "nombre", regex: /^[A-Za-z]+$/, mensaje: "Nombre inválido" },
+            { id: "apellido", regex: /^[A-Za-z]+$/, mensaje: "Apellido inválido" },
+            { id: "email", regex: /^\S+@\S+\.\S+$/, mensaje: "Email inválido" },
+            { id: "password", regex: /^(?=.*[A-Z])(?=.*\d).{8,}$/, mensaje: "Contraseña inválida" },
+            { id: "dni", regex: /^\d{7,8}$/, mensaje: "DNI inválido" },
+            { id: "telefono", regex: /^\d{6,16}$/, mensaje: "Teléfono inválido" },
+            { id: "numero_tarjeta", regex: /^\d{16}$/, mensaje: "Tarjeta inválida" },
+            { id: "nacionalidad", regex: /^[A-Za-z]+$/, mensaje: "Nacionalidad inválida" }
+        ];
 
         let valido = true;
 
-        const nombre = document.getElementById('nombre');
-        const apellido = document.getElementById('apellido');
-        const email = document.getElementById('email');
-        const password = document.getElementById('password');
+        campos.forEach(campo => {
+            const input = document.getElementById(campo.id);
+            if (!campo.regex.test(input.value.trim())) {
+                input.classList.add("is-invalid");
+                valido = false;
+            } else {
+                input.classList.remove("is-invalid");
+            }
+        });
 
-        if (nombre.value.trim() === '') {
-            nombre.classList.add('is-invalid');
-            valido = false;
-        }
-        if (apellido.value.trim() === '') {
-            apellido.classList.add('is-invalid');
-            valido = false;
-        }
-        if (!email.value.includes('@')) {
-            email.classList.add('is-invalid');
-            valido = false;
-        }
-        if (password.value.length < 6) {
-            password.classList.add('is-invalid');
-            valido = false;
-        }
-
-        if (!valido) e.preventDefault(); // Solo cancela si hay errores
+        if (valido) form.submit();
     });
 });
 </script>

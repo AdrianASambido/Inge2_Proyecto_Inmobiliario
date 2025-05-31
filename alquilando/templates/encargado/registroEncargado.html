@@ -1,6 +1,98 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container mt-4" style="max-width: 500px;">
+    <h2 class="text-center mb-3">Registro de Encargado</h2>
+
+    <form method="POST" id="registroForm" novalidate>
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre">
+        </div>
+
+        <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="apellido" name="apellido">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email">
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password">
+                <button type="button" class="btn btn-outline-secondary" id="togglePassword">👁</button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Registrarse</button>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info text-center mt-3">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+    </form>
+
+    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary w-100 mt-2">Volver al inicio</a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    toggleBtn.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        toggleBtn.textContent = type === 'password' ? '👁' : '🙈';
+    });
+
+    // Validación manual al hacer submit (evitamos validaciones automáticas)
+    document.getElementById('registroForm').addEventListener('submit', function (e) {
+        // Limpia clases anteriores
+        ['nombre', 'apellido', 'email', 'password'].forEach(id => {
+            document.getElementById(id).classList.remove('is-invalid');
+        });
+
+        let valido = true;
+
+        const nombre = document.getElementById('nombre');
+        const apellido = document.getElementById('apellido');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+
+        if (nombre.value.trim() === '') {
+            nombre.classList.add('is-invalid');
+            valido = false;
+        }
+        if (apellido.value.trim() === '') {
+            apellido.classList.add('is-invalid');
+            valido = false;
+        }
+        if (!email.value.includes('@')) {
+            email.classList.add('is-invalid');
+            valido = false;
+        }
+        if (password.value.length < 6) {
+            password.classList.add('is-invalid');
+            valido = false;
+        }
+
+        if (!valido) e.preventDefault(); // Solo cancela si hay errores
+    });
+});
+</script>
+{% endblock %}
+
+
+<!--
+{% extends 'base.html' %}
+
+{% block content %}
 <div class="container mt-5">
     <h2 class="text-center">Registro de Encargado</h2>
     <p class="text-center">Completa el formulario para crear tu cuenta.</p>
@@ -31,4 +123,4 @@
     <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 
 </div>
-{% endblock %}
+{% endblock %}-->
