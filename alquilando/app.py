@@ -7,10 +7,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
@@ -94,24 +94,60 @@ def registro_usuario():
     return render_template('usuario/registroUsuario.html')
 
 # -------------------------------------------------------
-# RUTAS: EDITAR PERFIL, MENUENCARGADO, MENUADMINISTRADOR
+# RUTAS: EDITAR PERFIL, MENUADMINISTRADOR
 # -------------------------------------------------------
 @app.route('/editarPerfil')
 def editar_perfil():
     return render_template('usuario/editarPerfil.html')
 
-@app.route('/listado_propiedades')
-def listado_propiedades():
-    return render_template('encargado/listadoPropiedades.html')
-    return "Acá va el listado de propiedades para encargados o administradores"
 
-@app.route('/menuEncargado')
-def menu_Encargado():
-    return render_template('encargado/menuEncargado.html')
+
 
 @app.route('/menuAdministrador')
 def menu_Administrador():
     return render_template('administrador/menuAdministrador.html')
+
+
+# ----------------------------------------
+# MENU ENCARGADO
+# ----------------------------------------
+
+@app.route('/menu_encargado')
+def menu_encargado():
+    print(f"[DEBUG] Accediendo a /menu_encargado, sesión: {dict(session)}")
+    if 'usuario_nombre' not in session:
+        print("[DEBUG] No hay 'nombre' en sesión. Redirigiendo a login.")
+        return redirect(url_for('login'))
+    nombre = session['usuario_nombre']
+    return render_template('encargado/menuEncargado.html', nombre=nombre)
+
+    
+
+@app.route('/encargado/propiedades')
+def listado_propiedades():
+    encargado_id = session['usuario_id']
+    propiedades = []
+
+    try:
+        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT p.id, p.calle, p.dpto, p.piso, p.numero, p.cantidad_ambientes, p.petfriendly, p.listada,
+               (SELECT url FROM imagen i WHERE i.propiedad_id = p.id LIMIT 1) AS imagen_url
+        FROM propiedad p
+        WHERE p.encargado_id = %s;
+        '''
+        cursor.execute(query, (encargado_id,))
+        propiedades = cursor.fetchall()
+
+    except Exception as e:
+        print(f"[ERROR] al consultar propiedades: {e}")
+    finally:
+        if 'cursor' in locals(): cursor.close()
+        if 'conn' in locals(): conn.close()
+
+    return render_template('encargado/listadoPropiedades.html', propiedades=propiedades)
 
 # ----------------------------------------
 # REGISTRO ENCARGADO
@@ -247,7 +283,7 @@ def login():
                     if tipo == 'cliente':
                         return redirect(url_for('sesion_iniciada'))
                     elif tipo == 'encargado':
-                        return redirect(url_for('menu_Encargado'))
+                        return redirect(url_for('menu_encargado'))
                     elif tipo == 'administrador':
                         return redirect(url_for('menu_Administrador'))
                 else:
