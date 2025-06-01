@@ -8,10 +8,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = ""
-DB_NAME = ""
+DB_HOST = "localhost"
+DB_NAME = "db_init_alquilando"
 DB_USER = "postgres"
-DB_PASSWORD = "N1C0L45M0N74N4R1i$"
+DB_PASSWORD = "adrianingedos"
 
 # Página principal
 @app.route('/')
@@ -137,7 +137,7 @@ def registro_usuario():
     return render_template('usuario/registroUsuario.html')
 
 # -------------------------------------------------------
-# RUTAS: EDITAR PERFIL, MENU ENCARGADO, MENUA DMINISTRADOR
+# RUTAS: EDITAR PERFIL, MENU ENCARGADO, MENUA ADMINISTRADOR
 # -------------------------------------------------------
 #@app.route('/editarPerfil')
 #def editar_perfil():
