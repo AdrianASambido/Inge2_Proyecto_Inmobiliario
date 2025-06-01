@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import datetime, timedelta, date
+from flask import flash
 import psycopg2
 import re
 
@@ -44,6 +45,17 @@ def es_contraseña_segura(password):
             re.search(r"[0-9]", password))  
 
 # ----------------------------------------
+# CONTROLES A REGISTRO USUARIO
+# ----------------------------------------
+def es_email_valido(email):
+    return re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email)
+
+def solo_letras(texto):
+    return re.fullmatch(r'[A-Za-z]{1,30}', texto)
+
+def solo_numeros(texto, min_len, max_len):
+    return texto.isdigit() and min_len <= len(texto) <= max_len
+# ----------------------------------------
 # REGISTRO USUARIO
 
 # ----------------------------------------
@@ -59,11 +71,39 @@ def registro_usuario():
         numero_tarjeta = request.form.get('numero_tarjeta', '').strip()
         nacionalidad = request.form.get('nacionalidad', '').strip()
 
+        # Validaciones
+        if not solo_letras(nombre):
+            flash("El nombre solo debe contener letras (hasta 30 caracteres).")
+            return redirect(url_for('registro_usuario'))
+
+        if not solo_letras(apellido):
+            flash("El apellido solo debe contener letras (hasta 30 caracteres).")
+            return redirect(url_for('registro_usuario'))
+
+        if not solo_letras(nacionalidad):
+            flash("La nacionalidad solo debe contener letras (hasta 30 caracteres).")
+            return redirect(url_for('registro_usuario'))
+
+        if not es_email_valido(email):
+            flash("Correo electrónico inválido. Asegurate de que tenga formato correcto (ej: usuario@dominio.com).")
+            return redirect(url_for('registro_usuario'))
+
+        if not solo_numeros(dni, 7, 8):
+            flash("El DNI debe contener solo números (7 u 8 dígitos).")
+            return redirect(url_for('registro_usuario'))
+
+        if not solo_numeros(telefono, 1, 16):
+            flash("El teléfono debe contener solo números (sin guiones, hasta 16 dígitos).")
+            return redirect(url_for('registro_usuario'))
+
+        if not solo_numeros(numero_tarjeta, 16, 16):
+            flash("La tarjeta de crédito debe tener exactamente 16 números, sin guiones.")
+            return redirect(url_for('registro_usuario'))
+
         if not es_contraseña_segura(password):
             flash("La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.")
             return redirect(url_for('registro_usuario'))
-
-
+        
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
             cursor = conn.cursor()
@@ -80,6 +120,9 @@ def registro_usuario():
             conn.commit()
 
             flash("Registro exitoso. Iniciá sesión.")
+            # después de guardar el usuario y antes de redirigir
+            flash('Se le ha enviado una notificación a su dirección de correo electrónico')
+            #return redirect(url_for('sesionIniciada'))  # o la vista a la que vayas
             return redirect(url_for('login_usuario'))
 
         except Exception as e:
@@ -232,14 +275,14 @@ def registro_administrador():
 @app.route('/chat')
 def chat():
     if 'usuario_id' not in session:
-        return redirect(url_for('login_usuario'))
+        return redirect(url_for('login_usuario'))  
     return render_template('usuario/chat.html')
 
 #-----------------------------------------
 # LOGIN DE LOS TRES USUARIOS
 #-----------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
-def login():    
+def login():   
     if request.method == 'POST':
         tipo = request.form.get('tipo')
         email = request.form.get('email', '').strip()
@@ -250,18 +293,18 @@ def login():
             return redirect(url_for('login'))
 
         ahora = datetime.now()
-        if 'intentos' not in session:
-            session['intentos'] = 0
-            session['bloqueado_hasta'] = None
+        if 'intentos_login' not in session:
+            session['intentos_login'] = {}
 
-        if session['bloqueado_hasta']:
-            bloqueado_hasta = datetime.fromisoformat(session['bloqueado_hasta'])
+        intentos_info = session['intentos_login'].get(email, {'intentos': 0, 'bloqueado_hasta': None})
+
+        if intentos_info['bloqueado_hasta']:
+            bloqueado_hasta = datetime.fromisoformat(intentos_info['bloqueado_hasta'])
             if ahora < bloqueado_hasta:
                 flash(f"Demasiados intentos fallidos. Intentá de nuevo después de las {bloqueado_hasta.strftime('%H:%M:%S')}.")
                 return redirect(url_for('login'))
             else:
-                session['intentos'] = 0
-                session['bloqueado_hasta'] = None
+                intentos_info = {'intentos': 0, 'bloqueado_hasta': None}
 
         try:
             conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
@@ -276,8 +319,10 @@ def login():
                     session['usuario_tipo'] = tipo
                     session['usuario_nombre'] = usuario[1]
                     session['usuario_apellido'] = usuario[2]
-                    session['intentos'] = 0
-                    session['bloqueado_hasta'] = None
+
+                    # Limpiar intentos para este email
+                    if email in session['intentos_login']:
+                        del session['intentos_login'][email]
 
                     # Redirección según tipo de usuario
                     if tipo == 'cliente':
@@ -287,14 +332,17 @@ def login():
                     elif tipo == 'administrador':
                         return redirect(url_for('menu_Administrador'))
                 else:
-                    session['intentos'] += 1
-                    if session['intentos'] >= 3:
-                        session['bloqueado_hasta'] = (ahora + timedelta(minutes=5)).isoformat()
+                    intentos_info['intentos'] += 1
+                    if intentos_info['intentos'] >= 3:
+                        intentos_info['bloqueado_hasta'] = (ahora + timedelta(minutes=5)).isoformat()
                         flash("Demasiados intentos. Intentalo en 5 minutos.")
                     else:
                         flash("Contraseña incorrecta.")
             else:
                 flash("Email no registrado.")
+
+            session['intentos_login'][email] = intentos_info
+
         except Exception as e:
             print(f"[ERROR] Error de login: {e}")
             flash("Error del servidor.")
@@ -318,7 +366,7 @@ def sesion_iniciada():
 #-----------------------------------------
 @app.route('/recuperar_contraseña', methods=['GET', 'POST'])
 def recuperar_contraseña():
-    return render_template('recuperarContraseñaDesdeEmail.html')
+    return render_template('usuario/recuperarContraseñaDesdeEmail.html')
 #-----------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)

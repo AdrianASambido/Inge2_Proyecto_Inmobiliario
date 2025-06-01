@@ -1,4 +1,60 @@
-<!-- ESTA ES LA ULTIMA QUE ME PASO AI-->
+
+<!-- LA ORIGINSL SIN CONTROLES
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Registro de Usuario</h2>
+    <p class="text-center">Completa el formulario para crear tu cuenta.</p>
+
+    <form method="POST" action="{{ url_for('registro_usuario') }}" class="mt-4">
+    <div class="mb-1">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="apellido" class="form-label">Apellido</label>
+        <input type="text" class="form-control" id="apellido" name="apellido" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="email" class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="dni" class="form-label">N° de documento/DNI</label>
+        <input type="number" class="form-control" id="dni" name="dni" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="telefono" class="form-label">Teléfono</label>
+        <input type="number" class="form-control" id="telefono" name="telefono" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="numero_tarjeta" class="form-label">N° Tarjeta de crédito</label>
+        <input type="number" class="form-control" id="numero_tarjeta" name="numero_tarjeta" required>
+    </div>
+
+    <div class="mb-1">
+        <label for="nacionalidad" class="form-label">Nacionalidad</label>
+        <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" required>
+    </div>
+        <button type="submit" class="btn btn-success w-100">Registrarse</button>
+    </form>
+    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+</div>
+{% endblock %}
+-->
+
+<!-- REGISTRO DE USUARIO ESTA ES LA ULTIMA QUE ME PASO AI-->
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4" style="max-width: 500px;">
