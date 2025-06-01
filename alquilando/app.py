@@ -8,10 +8,10 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Configuración PostgreSQL
-DB_HOST = "localhost"
-DB_NAME = "db_init_alquilando"
+DB_HOST = ""
+DB_NAME = ""
 DB_USER = "postgres"
-DB_PASSWORD = "adrianingedos"
+DB_PASSWORD = "N1C0L45M0N74N4R1i$"
 
 # Página principal
 @app.route('/')
@@ -339,7 +339,7 @@ def login():
                     if tipo == 'cliente':
                         return redirect(url_for('sesion_iniciada'))
                     elif tipo == 'encargado':
-                        return redirect(url_for('menu_Encargado'))
+                        return redirect(url_for('menu_encargado'))
                     elif tipo == 'administrador':
                         return redirect(url_for('menu_Administrador'))
                 else:
