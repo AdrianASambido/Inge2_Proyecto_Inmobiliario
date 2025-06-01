@@ -137,11 +137,11 @@ def registro_usuario():
     return render_template('usuario/registroUsuario.html')
 
 # -------------------------------------------------------
-# RUTAS: EDITAR PERFIL, MENUENCARGADO, MENUA DMINISTRADOR
+# RUTAS: EDITAR PERFIL, MENU ENCARGADO, MENUA DMINISTRADOR
 # -------------------------------------------------------
-@app.route('/editarPerfil')
-def editar_perfil():
-    return render_template('usuario/editarPerfil.html')
+#@app.route('/editarPerfil')
+#def editar_perfil():
+#    return render_template('usuario/editarPerfil.html')
 
 @app.route('/listado_propiedades')
 def listado_propiedades():
@@ -155,6 +155,53 @@ def menu_Encargado():
 @app.route('/menuAdministrador')
 def menu_Administrador():
     return render_template('administrador/menuAdministrador.html')
+#-------------------------------------------------------------------
+#EDITAR PERFIL
+#-------------------------------------------------------------------
+@app.route('/editarPerfil', methods=['GET', 'POST'])
+def editar_perfil():
+    if 'id_usuario' not in session or 'tipo_usuario' not in session:
+        return redirect('usuario/editarPerfil')  # cambie /loginUsuario por /login
+
+    tipo_usuario = session['tipo_usuario']
+    id_usuario = session['id_usuario']
+
+    if request.method == 'POST':
+        nuevo_nombre = request.form.get('nombre')
+        nuevo_apellido = request.form.get('apellido')
+        nuevo_email = request.form.get('email')
+        nuevo_telefono = request.form.get('telefono')
+        nueva_contrasena = request.form.get('contrasena')
+
+        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+        cur = conn.cursor()
+
+        tabla = ""
+        if tipo_usuario == "cliente":
+            tabla = "cliente"
+        elif tipo_usuario == "encargado":
+            tabla = "encargado"
+        elif tipo_usuario == "administrador":
+            tabla = "administrador"
+
+        cur.execute(f"""
+            UPDATE {tabla}
+            SET nombre = %s,
+                apellido = %s,
+                email = %s,
+                telefono = %s,
+                contrasena = %s
+            WHERE id = %s
+        """, (nuevo_nombre, nuevo_apellido, nuevo_email, nuevo_telefono, nueva_contrasena, id_usuario))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        flash("Perfil actualizado correctamente")
+        return redirect('usuario/sesionIniciada')  # O a donde quieras volver
+
+    return render_template('usuario/editarPerfil.html')# le agregue usuario/
 
 # ----------------------------------------
 # REGISTRO ENCARGADO

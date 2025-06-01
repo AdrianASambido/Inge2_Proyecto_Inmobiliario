@@ -1,5 +1,5 @@
-<!-- ESTA ES LA ULTIMA QUE ME PASO AI-->
 {% extends 'base.html' %}
+<!-- ESTA ES LA ULTIMA QUE ME PASO AI-->
 {% block content %}
 <div class="container mt-4" style="max-width: 500px;">
     <h2 class="text-center mb-2">Registro de Usuario</h2>
@@ -30,7 +30,7 @@
                 <input type="password" class="form-control" id="password" name="password" required>
                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">👁</button>
             </div>
-            <div class="invalid-feedback">Mínimo 8 caracteres, al menos una mayúscula y un número.</div>
+            <div class="invalid-feedback">Mínimo 6 caracteres, al menos una mayúscula y un número.</div>
         </div>
 
         <div class="mb-2">
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
             { id: "nombre", regex: /^[A-Za-z]+$/, mensaje: "Nombre inválido" },
             { id: "apellido", regex: /^[A-Za-z]+$/, mensaje: "Apellido inválido" },
             { id: "email", regex: /^\S+@\S+\.\S+$/, mensaje: "Email inválido" },
-            { id: "password", regex: /^(?=.*[A-Z])(?=.*\d).{8,}$/, mensaje: "Contraseña inválida" },
+            { id: "password", regex: /^(?=.*[A-Z])(?=.*\d).{6,}$/, mensaje: "Contraseña inválida" },
             { id: "dni", regex: /^\d{7,8}$/, mensaje: "DNI inválido" },
             { id: "telefono", regex: /^\d{6,16}$/, mensaje: "Teléfono inválido" },
             { id: "numero_tarjeta", regex: /^\d{16}$/, mensaje: "Tarjeta inválida" },
