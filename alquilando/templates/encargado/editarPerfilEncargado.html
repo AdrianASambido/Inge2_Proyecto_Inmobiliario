@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4" style="max-width: 500px;">
-    <h2 class="text-center mb-2">Editar Perfil</h2>
+    <h2 class="text-center mb-2">Editar Perfil - Encargado</h2>
     <p class="text-center mb-3">Modifica tus datos personales.</p>
 
     <form id="editarForm" method="POST" action="{{ url_for('editar_perfil') }}" novalidate>
@@ -32,30 +32,7 @@
             </div>
             <div class="invalid-feedback">Mínimo 8 caracteres, al menos una mayúscula y un número.</div>
         </div>
-
-        <div class="mb-2">
-            <label for="dni" class="form-label">N° de documento/DNI</label>
-            <input type="text" class="form-control" id="dni" name="dni" value="{{ usuario.dni }}" required>
-            <div class="invalid-feedback">Debe tener entre 7 y 8 dígitos numéricos.</div>
-        </div>
-
-        <div class="mb-2">
-            <label for="telefono" class="form-label">Teléfono</label>
-            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono }}" required>
-            <div class="invalid-feedback">Ingrese un teléfono válido.</div>
-        </div>
-
-        <div class="mb-2">
-            <label for="numero_tarjeta" class="form-label">N° Tarjeta de crédito</label>
-            <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" value="{{ usuario.numero_tarjeta }}" required>
-            <div class="invalid-feedback">Debe tener exactamente 16 números.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="nacionalidad" class="form-label">Nacionalidad</label>
-            <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" value="{{ usuario.nacionalidad }}" required>
-            <div class="invalid-feedback">Solo letras permitidas.</div>
-        </div>       
+      
         <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
 
         {% with messages = get_flashed_messages() %}
@@ -70,7 +47,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("editarForm");
+    
 
     document.getElementById("togglePassword").addEventListener("click", function () {
         const passwordInput = document.getElementById("password");
@@ -79,34 +56,56 @@ document.addEventListener("DOMContentLoaded", function () {
         this.textContent = type === "password" ? "👁" : "🙈";
     });
 
+    const form = document.querySelector("form");
+
     form.addEventListener("submit", function (e) {
         e.preventDefault();
 
         const campos = [
-            { id: "nombre", regex: /^[A-Za-z]+$/, mensaje: "Nombre inválido" },
-            { id: "apellido", regex: /^[A-Za-z]+$/, mensaje: "Apellido inválido" },
-            { id: "email", regex: /^\S+@\S+\.\S+$/, mensaje: "Email inválido" },
-            { id: "password", regex: /^(?=.*[A-Z])(?=.*\d).{8,}$/, mensaje: "Contraseña inválida" },
-            { id: "dni", regex: /^\d{7,8}$/, mensaje: "DNI inválido" },
-            { id: "telefono", regex: /^\d{6,16}$/, mensaje: "Teléfono inválido" },
-            { id: "numero_tarjeta", regex: /^\d{16}$/, mensaje: "Tarjeta inválida" },
-            { id: "nacionalidad", regex: /^[A-Za-z]+$/, mensaje: "Nacionalidad inválida" }
+            {
+                id: "nombre",
+                regex: /^(?! )[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}(?<! )$/,
+                mensaje: "El nombre debe tener al menos 2 letras, sin espacios al inicio/final y solo letras y espacios."
+            },
+            {
+                id: "apellido",
+                regex: /^(?! )[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}(?<! )$/,
+                mensaje: "El apellido debe tener al menos 2 letras, sin espacios al inicio/final y solo letras y espacios."
+            },
+            {
+                id: "email",
+                regex: /^\S+@\S+\.\S+$/,
+                mensaje: "El email debe tener un formato válido."
+            },
+            {
+                id: "password",
+                regex: /^(?=.*[A-Z])(?=.*\d).{8,}$/,
+                mensaje: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número."
+            }
         ];
 
         let valido = true;
 
         campos.forEach(campo => {
             const input = document.getElementById(campo.id);
-            if (!campo.regex.test(input.value.trim())) {
+            const feedback = input.nextElementSibling; // Asume que el .invalid-feedback está justo después del input
+
+            if (!campo.regex.test(input.value)) {
                 input.classList.add("is-invalid");
+                if (feedback) {
+                    feedback.textContent = campo.mensaje;
+                    feedback.style.display = "block";
+                }
                 valido = false;
             } else {
                 input.classList.remove("is-invalid");
+                if (feedback) {
+                    feedback.style.display = "none";
+                }
             }
         });
 
         if (valido) form.submit();
     });
-});
 </script>
 {% endblock %}

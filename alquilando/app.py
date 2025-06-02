@@ -22,12 +22,6 @@ def pagina_inicio():
 #-----------------------------------------
 #CERRAR SESION
 #-----------------------------------------
-'''
-@app.route('/cerrar_sesion')
-def cerrar_sesion():
-    session.clear()
-    return redirect(url_for('inicio'))
-'''
 @app.route('/logout')
 def logout():
     session.clear()
@@ -39,7 +33,7 @@ def logout():
 
 # ----------------------------------------
 def es_contraseña_segura(password):
-    return (len(password) >= 8 and
+    return (len(password) >= 6 and
             re.search(r"[A-Z]", password) and
             re.search(r"[a-z]", password) and
             re.search(r"[0-9]", password))  
@@ -139,15 +133,10 @@ def registro_usuario():
 # -------------------------------------------------------
 # RUTAS: EDITAR PERFIL, MENU ENCARGADO, MENUA ADMINISTRADOR
 # -------------------------------------------------------
-#@app.route('/editarPerfil')
-#def editar_perfil():
-#    return render_template('usuario/editarPerfil.html')
-
 @app.route('/listado_propiedades')
 def listado_propiedades():
     return render_template('encargado/listadoPropiedades.html')
-    return "Acá va el listado de propiedades para encargados o administradores"
-
+    
 @app.route('/menuEncargado')
 def menu_Encargado():
     return render_template('encargado/menuEncargado.html')
@@ -160,49 +149,70 @@ def menu_Administrador():
 #-------------------------------------------------------------------
 @app.route('/editarPerfil', methods=['GET', 'POST'])
 def editar_perfil():
-    if 'id_usuario' not in session or 'tipo_usuario' not in session:
-        return redirect('usuario/editarPerfil')  # cambie /loginUsuario por /login
+    if 'usuario_id' not in session or 'usuario_tipo' not in session:
+        flash("Primero debes iniciar sesión.")
+        return redirect(url_for('login'))
 
-    tipo_usuario = session['tipo_usuario']
-    id_usuario = session['id_usuario']
+    id_usuario = session['usuario_id']
+    tipo_usuario = session['usuario_tipo']
+
+    tabla = ""
+    template = ""
+    campos = []
+
+    if tipo_usuario == "cliente":
+        tabla = "cliente"
+        template = "usuario/editarPerfil.html"
+        campos = ['nombre', 'apellido', 'email', 'password', 'dni', 'telefono', 'numero_tarjeta', 'nacionalidad']
+    elif tipo_usuario == "encargado":
+        tabla = "encargado"
+        template = "encargado/editarPerfilEncargado.html"
+        campos = ['nombre', 'apellido', 'email', 'password']
+    elif tipo_usuario == "administrador":
+        tabla = "administrador"
+        template = "Administrador/editarPerfilAdministrador.html"
+        campos = ['nombre', 'apellido', 'email', 'password']
+    else:
+        flash("Tipo de usuario no válido.")
+        return redirect(url_for('login'))
+
+    conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+    cur = conn.cursor()
 
     if request.method == 'POST':
-        nuevo_nombre = request.form.get('nombre')
-        nuevo_apellido = request.form.get('apellido')
-        nuevo_email = request.form.get('email')
-        nuevo_telefono = request.form.get('telefono')
-        nueva_contrasena = request.form.get('contrasena')
+        valores = [request.form.get(campo, '') for campo in campos]
+        set_clause = ", ".join([f"{campo} = %s" for campo in campos])
 
-        conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cur = conn.cursor()
-
-        tabla = ""
-        if tipo_usuario == "cliente":
-            tabla = "cliente"
-        elif tipo_usuario == "encargado":
-            tabla = "encargado"
-        elif tipo_usuario == "administrador":
-            tabla = "administrador"
-
-        cur.execute(f"""
+        query = f'''
             UPDATE {tabla}
-            SET nombre = %s,
-                apellido = %s,
-                email = %s,
-                telefono = %s,
-                contrasena = %s
+            SET {set_clause}
             WHERE id = %s
-        """, (nuevo_nombre, nuevo_apellido, nuevo_email, nuevo_telefono, nueva_contrasena, id_usuario))
-
+        '''
+        cur.execute(query, (*valores, id_usuario))
         conn.commit()
+
+        flash("Perfil actualizado correctamente.")
         cur.close()
         conn.close()
+        return redirect(url_for('editar_perfil'))
 
-        flash("Perfil actualizado correctamente")
-        return redirect('usuario/sesionIniciada')  # O a donde quieras volver
+    # Método GET: obtener datos actuales del usuario
+    select_fields = ", ".join(campos)
+    cur.execute(f'''
+        SELECT {select_fields}
+        FROM {tabla}
+        WHERE id = %s
+    ''', (id_usuario,))
+    datos = cur.fetchone()
+    cur.close()
+    conn.close()
 
-    return render_template('usuario/editarPerfil.html')# le agregue usuario/
-
+    if datos:
+        usuario = dict(zip(campos, datos))
+        return render_template(template, usuario=usuario)
+    else:
+        flash("No se encontraron datos del usuario.")
+        return redirect(url_for('sesion_iniciada'))
 # ----------------------------------------
 # REGISTRO ENCARGADO
 # ----------------------------------------

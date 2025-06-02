@@ -1,59 +1,3 @@
-
-<!-- LA ORIGINSL SIN CONTROLES
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Registro de Usuario</h2>
-    <p class="text-center">Completa el formulario para crear tu cuenta.</p>
-
-    <form method="POST" action="{{ url_for('registro_usuario') }}" class="mt-4">
-    <div class="mb-1">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="apellido" class="form-label">Apellido</label>
-        <input type="text" class="form-control" id="apellido" name="apellido" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="email" name="email" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" name="password" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="dni" class="form-label">N° de documento/DNI</label>
-        <input type="number" class="form-control" id="dni" name="dni" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="telefono" class="form-label">Teléfono</label>
-        <input type="number" class="form-control" id="telefono" name="telefono" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="numero_tarjeta" class="form-label">N° Tarjeta de crédito</label>
-        <input type="number" class="form-control" id="numero_tarjeta" name="numero_tarjeta" required>
-    </div>
-
-    <div class="mb-1">
-        <label for="nacionalidad" class="form-label">Nacionalidad</label>
-        <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" required>
-    </div>
-        <button type="submit" class="btn btn-success w-100">Registrarse</button>
-    </form>
-    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
-</div>
-{% endblock %}
--->
-
 <!-- REGISTRO DE USUARIO ESTA ES LA ULTIMA QUE ME PASO AI-->
 {% extends 'base.html' %}
 {% block content %}
@@ -170,3 +114,81 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 {% endblock %}
 
+<!--
+#-------------------------------------------------------------------
+#EDITAR PERFIL
+#-------------------------------------------------------------------
+@app.route('/editarPerfil', methods=['GET', 'POST'])
+def editar_perfil():
+    if 'usuario_id' not in session or 'usuario_tipo' not in session:
+        flash("Primero debes iniciar sesión.")
+        return redirect(url_for('login'))
+
+    id_usuario = session['usuario_id']
+    tipo_usuario = session['usuario_tipo']
+
+    tabla = ""
+    if tipo_usuario == "cliente":
+        tabla = "cliente"
+    elif tipo_usuario == "encargado":
+        tabla = "encargado"
+    elif tipo_usuario == "administrador":
+        tabla = "administrador"
+    else:
+        flash("Tipo de usuario no válido.")
+        return redirect(url_for('login'))
+
+    conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        email = request.form['email']
+        password = request.form['password']
+        dni = request.form['dni']
+        telefono = request.form['telefono']
+        numero_tarjeta = request.form['numero_tarjeta']
+        nacionalidad = request.form['nacionalidad']
+
+        cur.execute(f'''
+            UPDATE {tabla}
+            SET nombre = %s, apellido = %s, email = %s, contrasena = %s, dni = %s,
+                telefono = %s, numero_tarjeta = %s, nacionalidad = %s
+            WHERE id = %s
+        ''', (nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad, id_usuario))
+
+        conn.commit()
+        flash("Perfil actualizado correctamente.")
+        cur.close()
+        conn.close()
+        return redirect(url_for('editar_perfil'))
+
+    # Método GET: obtener datos actuales del usuario
+    cur.execute(f'''
+        SELECT nombre, apellido, email, password, dni, telefono, numero_tarjeta, nacionalidad
+        FROM {tabla}
+        WHERE id = %s
+    ''', (id_usuario,))
+    datos = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if datos:
+        usuario = {
+            'nombre': datos[0],
+            'apellido': datos[1],
+            'email': datos[2],
+            'password': datos[3],
+            'dni': datos[4],
+            'telefono': datos[5],
+            'numero_tarjeta': datos[6],
+            'nacionalidad': datos[7]
+        }
+        return render_template('usuario/editarPerfil.html', usuario=usuario)
+    else:
+        flash("No se encontraron datos del usuario.")
+        return redirect(url_for('sesion_iniciada'))
+
+        const form = document.getElementById("editarForm");
+-->
