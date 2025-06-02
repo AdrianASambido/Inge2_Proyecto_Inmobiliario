@@ -135,7 +135,15 @@ def registro_usuario():
 # -------------------------------------------------------
 @app.route('/listado_propiedades')
 def listado_propiedades():
-    return render_template('encargado/listadoPropiedades.html')
+    # Conectás con la base, traés las propiedades, y las mandás al template
+    conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM propiedad")  # ajustá la consulta según tus columnas
+    propiedades = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template("encargado/listadoPropiedades.html", propiedades=propiedades)
 
 @app.route('/menuEncargado')
 def menu_encargado():
