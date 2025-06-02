@@ -192,3 +192,21 @@ def editar_perfil():
 
         const form = document.getElementById("editarForm");
 -->
+
+<!--
+{% extends 'base.html' %}
+
+{% block title %}Sesión iniciada{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2>Bienvenido/a {{ nombre }}</h2>
+  <p class="lead">Has iniciado sesión como <strong>{{ tipo }}</strong>.</p>
+
+  <div class="mt-4">
+    <a href="{{ url_for('editar_perfil') }}" class="btn btn-outline-primary me-2">Editar perfil</a>
+    <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar sesión</a>
+  </div>
+  <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+</div>
+{% endblock %}-->

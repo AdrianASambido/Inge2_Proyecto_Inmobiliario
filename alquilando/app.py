@@ -136,13 +136,13 @@ def registro_usuario():
 @app.route('/listado_propiedades')
 def listado_propiedades():
     return render_template('encargado/listadoPropiedades.html')
-    
+
 @app.route('/menuEncargado')
-def menu_Encargado():
+def menu_encargado():
     return render_template('encargado/menuEncargado.html')
 
 @app.route('/menuAdministrador')
-def menu_Administrador():
+def menu_administrador():
     return render_template('administrador/menuAdministrador.html')
 #-------------------------------------------------------------------
 #EDITAR PERFIL
@@ -349,9 +349,9 @@ def login():
                     if tipo == 'cliente':
                         return redirect(url_for('sesion_iniciada'))
                     elif tipo == 'encargado':
-                        return redirect(url_for('menu_encargado'))
+                        return redirect(url_for('sesion_iniciada'))#('menu_encargado'))
                     elif tipo == 'administrador':
-                        return redirect(url_for('menu_Administrador'))
+                        return redirect(url_for('sesion_iniciada')) #('menu_Administrador'))
                 else:
                     intentos_info['intentos'] += 1
                     if intentos_info['intentos'] >= 3:

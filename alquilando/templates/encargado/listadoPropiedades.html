@@ -46,7 +46,8 @@
     
 
     {% endfor %}
-     <button onclick="window.location.href='/menu_encargado'">
+      <a href="{{ url_for('menu_encargado') }}" class="btn btn-info mt-3">Menú</a>
+  <!--  <button onclick="window.location.href='/menu_encargado'">  ESTO ERA LO ANTERIOR-->
   Volver al Menú
    </button>
 </body>
