@@ -170,8 +170,8 @@ def ver_propiedades_encargado():
 
         # Trae propiedades del encargado
         cur.execute("""
-            SELECT p.id, p.direccion, p.ciudad, p.provincia, p.pais, 
-                   p.favorita, p.imagen
+            SELECT p.dpto, p.piso, p.numero, p.calle, p.cantidad_ambientes, p.petfriendly,
+            p.listada, encargado_id, p.imagen, p.pais, p.favorita
             FROM propiedad p
             WHERE p.encargado_id = %s
         """, (encargado_id,))
@@ -179,7 +179,7 @@ def ver_propiedades_encargado():
 
         cur.close()
         conn.close()
-        return render_template('Administrador/propiedadesPorEncargado.html', 
+        return render_template('encargado/propiedadesPorEncargado.html', 
                                encargado=encargado, propiedades=propiedades)
 
     # GET: muestra lista de encargados

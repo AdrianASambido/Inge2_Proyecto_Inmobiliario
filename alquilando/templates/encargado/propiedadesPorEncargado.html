@@ -8,7 +8,12 @@
         <p><em>Sin imagen</em></p>
     {% endif %}
     <p><strong>Dirección:</strong> {{ p[1] }}, {{ p[2] }}, {{ p[3] }}, {{ p[4] }}</p>
-    <p><strong>Favorita:</strong> {{ 'Sí' if p[5] else 'No' }}</p>
+    <p><strong>Ambientes:</strong> {{ p[5] }}</p>
+    <p><strong>Pet Friendly:</strong> {{ 'Sí' if p[6] else 'No' }}</p>
+    <p><strong>¿Listada?:</strong> {{ 'Sí' if p[7] else 'No' }}</p>
+    <p><strong>Imagen:</strong> {{ p[9] }}</p>
+    <p><strong>Pais:</strong> {{ p[10] }}</p>
+    <p><strong>¿Favorita?:</strong> {{ 'Sí' if p[11] else 'No' }}</p>  
 </div>
 {% endfor %}
 
