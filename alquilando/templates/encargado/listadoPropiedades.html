@@ -43,12 +43,16 @@
         <p><strong>Pet Friendly:</strong> {{ 'Sí' if p[6] else 'No' }}</p>
         <p><strong>¿Listada?:</strong> {{ 'Sí' if p[7] else 'No' }}</p>
     </div>
-    
-
     {% endfor %}
-      <a href="{{ url_for('menu_encargado') }}" class="btn btn-info mt-3">Menú</a>
-  <!--  <button onclick="window.location.href='/menu_encargado'">  ESTO ERA LO ANTERIOR-->
+    {% if origen == 'administrador' %}
+        <a href="{{ url_for('menu_administrador') }}" class="btn btn-info mt-3">Volver al Menú</a>
+    {% else %}
+        <a href="{{ url_for('menu_encargado') }}" class="btn btn-info mt-3">Volver al Menú</a>
+    {% endif %}
+
+     <!--   <a href="{{ url_for('menu_encargado') }}" class="btn btn-info mt-3">Menú</a>
+  <button onclick="window.location.href='/menu_encargado'">  ESTO ERA LO ANTERIOR
   Volver al Menú
-   </button>
+   </button>-->
 </body>
 </html>

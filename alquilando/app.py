@@ -51,7 +51,6 @@ def solo_numeros(texto, min_len, max_len):
     return texto.isdigit() and min_len <= len(texto) <= max_len
 # ----------------------------------------
 # REGISTRO USUARIO
-
 # ----------------------------------------
 @app.route('/registroUsuario', methods=['GET', 'POST'])
 def registro_usuario():
@@ -131,10 +130,11 @@ def registro_usuario():
     return render_template('usuario/registroUsuario.html')
 
 # -------------------------------------------------------
-# RUTAS: EDITAR PERFIL, MENU ENCARGADO, MENUA ADMINISTRADOR
+# LISTA DE PROPIEDADES
 # -------------------------------------------------------
 @app.route('/listado_propiedades')
 def listado_propiedades():
+    origen = request.args.get('origen', 'encargado')  # valor por defecto: encargado
     # Conectás con la base, traés las propiedades, y las mandás al template
     conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
     cur = conn.cursor()
@@ -143,8 +143,10 @@ def listado_propiedades():
     cur.close()
     conn.close()
 
-    return render_template("encargado/listadoPropiedades.html", propiedades=propiedades)
+    return render_template('encargado/listadoPropiedades.html', propiedades=propiedades, origen=origen)
+#   return render_template("encargado/listadoPropiedades.html", propiedades=propiedades)
 
+#-------------------------------------------------------------------
 @app.route('/menuEncargado')
 def menu_encargado():
     return render_template('encargado/menuEncargado.html')

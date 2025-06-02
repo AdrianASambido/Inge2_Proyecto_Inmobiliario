@@ -26,12 +26,17 @@
         </div>
     </header>-->
     <h1>Bienvenido al menú encargado{{ nombre }}</h1>
-
+    <form action="{{ url_for('listado_propiedades') }}" method="get">
+        <input type="hidden" name="origen" value="encargado">
+        <button type="submit">Ver listado de propiedades</button>
+        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+    </form>
+<!--
     <form action="{{ url_for('listado_propiedades') }}" method="get">
         <button type="submit">Ver listado de propiedades</button>
         <a href="{{ url_for('logout') }}">Cerrar sesión</a>
 
-    </form>
+    </form> -->
 </body>
 </html>
 <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
