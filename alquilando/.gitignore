@@ -6,11 +6,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.sqlite3
 instance/
 .vscode/
 .idea/
 *.log
 .DS_Store
-
-
