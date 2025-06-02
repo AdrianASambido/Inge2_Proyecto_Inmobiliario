@@ -25,7 +25,7 @@
             </div>
         </div>
     </header>-->
-    <h1>Bienvenido {{ nombre }}</h1>
+    <h1>Bienvenido al menú encargado{{ nombre }}</h1>
 
     <form action="{{ url_for('listado_propiedades') }}" method="get">
         <button type="submit">Ver listado de propiedades</button>
@@ -34,4 +34,5 @@
     </form>
 </body>
 </html>
+<a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 {% endblock %}

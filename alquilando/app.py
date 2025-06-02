@@ -153,6 +153,40 @@ def menu_encargado():
 def menu_administrador():
     return render_template('administrador/menuAdministrador.html')
 #-------------------------------------------------------------------
+#LISTADO DE PROPIEDADES POR ENCARGADO
+#-------------------------------------------------------------------
+@app.route('/ver_propiedades_encargado', methods=['GET', 'POST'])
+def ver_propiedades_encargado():
+    conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        encargado_id = request.form['encargado_id']
+        # Trae nombre y apellido del encargado
+        cur.execute("SELECT nombre, apellido FROM encargado WHERE id = %s", (encargado_id,))
+        encargado = cur.fetchone()
+
+        # Trae propiedades del encargado
+        cur.execute("""
+            SELECT p.id, p.direccion, p.ciudad, p.provincia, p.pais, 
+                   p.favorita, p.imagen
+            FROM propiedad p
+            WHERE p.encargado_id = %s
+        """, (encargado_id,))
+        propiedades = cur.fetchall()
+
+        cur.close()
+        conn.close()
+        return render_template('Administrador/propiedadesPorEncargado.html', 
+                               encargado=encargado, propiedades=propiedades)
+
+    # GET: muestra lista de encargados
+    cur.execute("SELECT id, nombre, apellido FROM encargado")
+    encargados = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('Administrador/seleccionarEncargado.html', encargados=encargados)
+#-------------------------------------------------------------------
 #EDITAR PERFIL
 #-------------------------------------------------------------------
 @app.route('/editarPerfil', methods=['GET', 'POST'])

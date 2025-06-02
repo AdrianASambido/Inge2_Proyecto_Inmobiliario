@@ -1,0 +1,10 @@
+<h2>Seleccionar Encargado</h2>
+<form method="POST" action="{{ url_for('ver_propiedades_encargado') }}">
+    <label for="encargado_id">Encargado:</label>
+    <select name="encargado_id" id="encargado_id" class="form-select">
+        {% for e in encargados %}
+            <option value="{{ e[0] }}">{{ e[1] }} {{ e[2] }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary mt-2">Ver propiedades</button>
+</form>

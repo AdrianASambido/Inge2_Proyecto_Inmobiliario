@@ -1,0 +1,15 @@
+<h2>Propiedades a cargo de {{ encargado[0] }} {{ encargado[1] }}</h2>
+
+{% for p in propiedades %}
+<div class="propiedad">
+    {% if p[6] %}
+        <img src="{{ p[6] }}" alt="Imagen" style="width:200px;">
+    {% else %}
+        <p><em>Sin imagen</em></p>
+    {% endif %}
+    <p><strong>Dirección:</strong> {{ p[1] }}, {{ p[2] }}, {{ p[3] }}, {{ p[4] }}</p>
+    <p><strong>Favorita:</strong> {{ 'Sí' if p[5] else 'No' }}</p>
+</div>
+{% endfor %}
+
+<a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-secondary mt-3">Volver</a>
