@@ -258,26 +258,39 @@ def menu_administrador():
 #-------------------------------------------------------------------
 @app.route('/buscar_propiedad', methods=['GET', 'POST'])
 def buscar_propiedad():
+    propiedades = []
+    mensaje = ""
+
     if request.method == 'POST':
-        termino = request.form['termino'].strip().lower()
+        termino = request.form.get('termino', '').strip().lower()
 
-        conn = obtener_conexion()             #get_db_connection()
-        cursor = conn.cursor()
+        if termino:
+            conn = obtener_conexion()
+            cursor = conn.cursor()
 
-        # Buscamos por coincidencias en la dirección armada
-        consulta = """
-        SELECT *
-        FROM propiedad
-        WHERE LOWER(direccion || ' ' || numero || ' ' || COALESCE(dpto, '') || ' ' || COALESCE(piso, '') || ' ' || ciudad || ' ' || provincia || ' ' || pais)
-        LIKE %s
-        """
-        cursor.execute(consulta, (f'%{termino}%',))
-        propiedades = cursor.fetchall()
+            consulta = """
+                SELECT * FROM propiedad
+                WHERE 
+                    LOWER(dpto) LIKE %s OR
+                    LOWER(piso) LIKE %s OR
+                    LOWER(numero) LIKE %s OR
+                    LOWER(calle) LIKE %s OR
+                    LOWER(ciudad) LIKE %s OR
+                    LOWER(provincia) LIKE %s
+            """
+            parametros = tuple(f'%{termino}%' for _ in range(6))
 
-        conn.close()
-        return render_template('resultados_busqueda.html', propiedades=propiedades, termino=termino)
+            cursor.execute(consulta, parametros)
+            propiedades = cursor.fetchall()
 
-    return render_template('administrador/buscarPropiedad.html')
+            conn.close()
+
+            if not propiedades:
+                mensaje = "No se encontraron propiedades que coincidan con el término ingresado."
+        else:
+            mensaje = "Por favor, ingresá un término para buscar."
+
+    return render_template('administrador/buscarPropiedad.html', propiedades=propiedades, mensaje=mensaje)
 
 #-------------------------------------------------------------------
 #                   EDITAR PROPIEDAD
