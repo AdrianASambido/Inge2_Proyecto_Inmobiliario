@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Resultados de Búsqueda{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Resultados de búsqueda para: "{{ termino }}"</h2>
+
+    {% if propiedades %}
+        <div class="row">
+            {% for propiedad in propiedades %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ propiedad[3] }} {{ propiedad[2] }}</h5>
+                            <p class="card-text">
+                                Ciudad: {{ propiedad[6] }}<br>
+                                Provincia: {{ propiedad[7] }}<br>
+                                País: {{ propiedad[8] }}
+                            </p>
+                            <!-- Podés agregar botón para ver o editar -->
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No se encontraron propiedades.</p>
+    {% endif %}
+
+    <a href="{{ url_for('buscar_propiedad') }}" class="btn btn-secondary mt-3">Nueva búsqueda</a>
+</div>
+{% endblock %}

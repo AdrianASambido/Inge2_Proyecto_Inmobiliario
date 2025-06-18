@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Recuperar Contraseña</h2>
+    <form method="POST" action="{{ url_for('recuperar_contraseña') }}">
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico registrado:</label>
+            <input type="email" class="form-control" name="email" id="email" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Recuperar</button>
+    </form>
+    {% if mensaje %}
+        <div class="alert alert-info mt-3">{{ mensaje }}</div>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+
+{% endblock %}

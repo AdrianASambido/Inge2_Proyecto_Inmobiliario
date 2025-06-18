@@ -240,3 +240,75 @@ MENU ADMINISTRADOR 02-02-25
 
 
 -->
+#-----------------------------------------
+# LOGIN DE LOS TRES USUARIOS
+#-----------------------------------------
+@app.route('/login', methods=['GET', 'POST'])
+def login():   
+    if request.method == 'POST':
+        tipo = request.form.get('tipo')
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        tabla = tipo if tipo in ['cliente', 'encargado', 'administrador'] else None
+        if not tabla:
+            flash("Tipo de usuario inválido.")
+            return redirect(url_for('login'))
+
+        ahora = datetime.now()
+        if 'intentos_login' not in session:
+            session['intentos_login'] = {}
+
+        intentos_info = session['intentos_login'].get(email, {'intentos': 0, 'bloqueado_hasta': None})
+
+        if intentos_info['bloqueado_hasta']:
+            bloqueado_hasta = datetime.fromisoformat(intentos_info['bloqueado_hasta'])
+            if ahora < bloqueado_hasta:
+                flash(f"Demasiados intentos fallidos. Intentá de nuevo después de las {bloqueado_hasta.strftime('%H:%M:%S')}.")
+                return redirect(url_for('login'))
+            else:
+                intentos_info = {'intentos': 0, 'bloqueado_hasta': None}
+
+        try:
+            conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM {tabla} WHERE email = %s", (email,))
+            usuario = cursor.fetchone()
+
+            if usuario:
+                password_almacenada = usuario[4] if len(usuario) > 4 else None
+                if password == password_almacenada:
+                    session['usuario_id'] = usuario[0]
+                    session['usuario_tipo'] = tipo
+                    session['usuario_nombre'] = usuario[1]
+                    session['usuario_apellido'] = usuario[2]
+
+                    # Limpiar intentos para este email
+                    if email in session['intentos_login']:
+                        del session['intentos_login'][email]
+
+                    # Redirección según tipo de usuario
+                    if tipo == 'cliente':
+                        return redirect(url_for('sesion_iniciada'))
+                    elif tipo == 'encargado':
+                        return redirect(url_for('sesion_iniciada'))#('menu_encargado'))
+                    elif tipo == 'administrador':
+                        return redirect(url_for('sesion_iniciada')) #('menu_Administrador'))
+                else:
+                    intentos_info['intentos'] += 1
+                    if intentos_info['intentos'] >= 3:
+                        intentos_info['bloqueado_hasta'] = (ahora + timedelta(minutes=5)).isoformat()
+                        flash("Demasiados intentos. Intentalo en 5 minutos.")
+                    else:
+                        flash("Contraseña incorrecta.")
+            else:
+                flash("Email no registrado.")
+
+            session['intentos_login'][email] = intentos_info
+
+        except Exception as e:
+            print(f"[ERROR] Error de login: {e}")
+            flash("Error del servidor.")
+        finally:
+            if 'cursor' in locals(): cursor.close()
+            if 'conn' in locals(): conn.close()
+    return render_template('login.html')

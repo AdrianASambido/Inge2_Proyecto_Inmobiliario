@@ -1,20 +1,40 @@
-<h2>Propiedades a cargo de {{ encargado[0] }} {{ encargado[1] }}</h2>
+{% extends 'base.html' %}
 
-{% for p in propiedades %}
-<div class="propiedad">
-    {% if p[6] %}
-        <img src="{{ p[6] }}" alt="Imagen" style="width:200px;">
+{% block title %}Propiedades del Encargado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Propiedades a cargo de {{ encargado[0] }} {{ encargado[1] }}</h2>
+    
+    {% if propiedades %}
+        <div class="row">
+            {% for propiedad in propiedades %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if propiedad[8] %}
+                            <img src="{{ url_for('static', filename=propiedad[8]) }}" class="card-img-top" alt="Imagen propiedad" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='img/no-image.jpg') }}" class="card-img-top" alt="Sin imagen" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">Dirección: {{ propiedad[3] }} {{ propiedad[2] }}</h5>
+                            <p class="card-text">
+                                Piso: {{ propiedad[1] }}<br>
+                                Dpto: {{ propiedad[0] }}<br>
+                                Ambientes: {{ propiedad[4] }}<br>
+                                Pet Friendly: {{ 'Sí' if propiedad[5] else 'No' }}<br>
+                                País: {{ propiedad[9] }}<br>
+                                Favorita: {{ 'Sí' if propiedad[10] else 'No' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p><em>Sin imagen</em></p>
+        <p>No se encontraron propiedades para este encargado.</p>
     {% endif %}
-    <p><strong>Dirección:</strong> {{ p[1] }}, {{ p[2] }}, {{ p[3] }}, {{ p[4] }}</p>
-    <p><strong>Ambientes:</strong> {{ p[5] }}</p>
-    <p><strong>Pet Friendly:</strong> {{ 'Sí' if p[6] else 'No' }}</p>
-    <p><strong>¿Listada?:</strong> {{ 'Sí' if p[7] else 'No' }}</p>
-    <p><strong>Imagen:</strong> {{ p[9] }}</p>
-    <p><strong>Pais:</strong> {{ p[10] }}</p>
-    <p><strong>¿Favorita?:</strong> {{ 'Sí' if p[11] else 'No' }}</p>  
-</div>
-{% endfor %}
 
-<a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-secondary mt-3">Volver</a>
+    <a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% endblock %}

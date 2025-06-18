@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Propiedad{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Detalle de la Propiedad</h2>
+
+    {% if propiedad %}
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Dirección:</strong> {{ propiedad[4] }} {{ propiedad[3] }}, Dpto {{ propiedad[1] }}, Piso {{ propiedad[2] }}</p>
+            <p><strong>Ciudad:</strong> {{ propiedad[9] }}</p>
+            <p><strong>Provincia:</strong> {{ propiedad[10] }}</p>
+            <p><strong>País:</strong> {{ propiedad[8] }}</p>
+            <p><strong>Capacidad de personas:</strong> {{ propiedad[13] }}</p>
+            <p><strong>Tipo de propiedad:</strong> {{ propiedad[14] }}</p>
+            <p><strong>Cantidad de ambientes:</strong> {{ propiedad[5] }}</p>
+            <p><strong>Precio por noche:</strong> ${{ propiedad[11] }}</p>
+            <p><strong>Pet Friendly:</strong> {{ 'Sí' if propiedad[6] else 'No' }}</p>
+            <p><strong>Descripción:</strong> {{ propiedad[12] }}</p>
+            <p><strong>Publicada:</strong> {{ 'Sí' if propiedad[15] else 'No' }}</p>
+        </div>
+        {% if propiedad[7] %}
+        <img src="{{ propiedad[7] }}" alt="Imagen de la propiedad" class="card-img-bottom" style="max-height: 400px; object-fit: cover;">
+        {% endif %}
+    </div>
+    {% else %}
+    <p class="text-danger text-center">No se encontró la propiedad.</p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Encargado{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2 class="mb-4">Agregar un nuevo encargado</h2>
+  <a href="{{ url_for('registro_encargado') }}" class="btn btn-success btn-lg">Ir al formulario de registro</a>
+  <a href="{{ url_for('menu_administrador') }}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+  
+{% endblock %}

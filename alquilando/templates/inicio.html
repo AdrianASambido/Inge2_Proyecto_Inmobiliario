@@ -51,12 +51,24 @@
     </div>
 </div>
 
-
-
 <!-- Propiedades destacadas (más adelante acá irán los cards) -->
 <div class="container mt-5">
     <h3 class="mb-4 text-center">Propiedades destacadas</h3>
-    <!-- Aquí podés insertar los cards dinámicamente desde Flask -->
+    <div class="row">
+        {% for prop in propiedades %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ prop[4] }}" class="card-img-top" alt="Imagen propiedad">
+                <div class="card-body">
+                    <h5 class="card-title">{{ prop[2] }}</h5>
+                    <p class="card-text">{{ prop[1] }}</p>
+                    <p class="card-text"><strong>${{ prop[3] }}</strong> por noche</p>
+                    <a href="{{ url_for('ver_detalle_propiedad', propiedad_id=prop[0]) }}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 <!-- Script para sincronizar fechas -->

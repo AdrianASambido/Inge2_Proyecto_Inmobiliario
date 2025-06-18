@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Propiedades Cargadas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Propiedades Cargadas</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-success">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if propiedades %}
+        <div class="row">
+            {% for propiedad in propiedades %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if propiedad[7] %}           <!--'uploads/'-->
+                    <img src="{{ url_for('static', filename='img/' ~ propiedad[7]) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Imagen">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ propiedad[14] }}</h5>
+                        <p class="card-text"><strong>Dirección:</strong> {{ propiedad[4] }} {{ propiedad[3] }}, {{ propiedad[9] }}</p>
+                        <p class="card-text"><strong>Precio:</strong> ${{ propiedad[11] }} por noche</p>
+                        <a href="{{ url_for('detalle_propiedad', id=propiedad[0]) }}" class="btn btn-primary">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-danger">No hay propiedades registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

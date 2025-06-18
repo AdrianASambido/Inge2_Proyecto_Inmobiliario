@@ -4,28 +4,43 @@
 
 {% block content %}
 <div class="container mt-5 text-center">
-    <h1>Bienvenido al menú administrador {{ nombre }}</h1>
+    <h1 class="mb-4">Bienvenido al menú administrador {{ nombre }}</h1>
 
-    <!-- Botón para ver el listado general de propiedades -->
-    <form action="{{ url_for('listado_propiedades') }}" method="get" class="mb-3">
-        <input type="hidden" name="origen" value="administrador">
-        <button type="submit" class="btn btn-primary">Ver listado de propiedades</button>
-    </form>
-  <!--  <form action="{{ url_for('listado_propiedades') }}" method="get" class="mb-3">
-        <button type="submit" class="btn btn-primary">Ver listado de propiedades</button>
-    </form> -->
+    <div class="d-grid gap-3 col-6 mx-auto">
 
-    <!-- Botón para ver propiedades por encargado -->
-    <a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-outline-primary mb-3">
-        Ver listado de propiedades por encargado </a>
-    
-    <a href="{{ url_for('registro_encargado') }}" class="btn btn-outline-primary mb-3">
-        Agregar encargado </a>
+        <!-- Ver listado general de propiedades -->
+        <form action="{{ url_for('listado_propiedades') }}" method="get">
+            <input type="hidden" name="origen" value="administrador">
+            <button type="submit" class="btn btn-primary btn-lg">Ver listado de propiedades</button>
+        </form>
 
-    <!-- Botón para cerrar sesión -->
-    <a href="{{ url_for('logout') }}" class="btn btn-danger d-block mb-3">Cerrar sesión</a>
+        <!-- Ver propiedades por encargado -->
+        <a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-outline-primary btn-lg">
+            Ver propiedades por encargado
+        </a>
 
-    <!-- Botón para volver al inicio -->
-    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary">Volver al inicio</a>
+        <!-- Agregar encargado -->
+        <a href="{{ url_for('agregar_encargado') }}" class="btn btn-outline-success btn-lg">
+            Agregar encargado
+        </a>
+
+        <!-- Dar de alta propiedad -->
+        <a href="{{ url_for('dar_de_alta_propiedad') }}" class="btn btn-warning btn-lg">
+            Dar de alta propiedad
+        </a>
+
+        <!-- Editar propiedad (primero buscar) -->
+        <a href="{{ url_for('buscar_propiedad') }}" class="btn btn-outline-warning btn-lg">
+            Editar propiedad existente
+        </a>
+
+        <!-- Volver al inicio -->
+        <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary btn-lg">
+            Volver al inicio
+        </a>
+    </div>
+
+    <!-- Botón volver en parte inferior si querés mantenerlo -->
+    <a href="{{ url_for('menu_administrador') }}" class="btn btn-secondary mt-4">Volver</a>
 </div>
 {% endblock %}

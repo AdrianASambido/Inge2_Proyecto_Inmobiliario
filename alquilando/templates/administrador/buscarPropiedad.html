@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Buscar Propiedad{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Buscar Propiedad</h2>
+    <form method="POST" action="{{ url_for('buscar_propiedad') }}">
+        <div class="mb-3">
+            <label for="termino" class="form-label">Buscar por dirección, ciudad, etc.</label>
+            <input type="text" class="form-control" id="termino" name="termino" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</div>
+{% endblock %}
