@@ -34,6 +34,10 @@
                                 Provincia: {{ propiedad[7] }}<br>
                                 Capacidad: {{ propiedad[10] }} personas
                             </p>
+                                <!-- Botón para editar -->
+                            <form action="{{ url_for('editar_propiedad', propiedad_id=propiedad[0]) }}" method="get">
+                                <button type="submit" class="btn btn-outline-primary">Editar</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -44,6 +48,7 @@
     {% endif %}
 
 </div>
+
 {% if mensaje %}
     <div class="alert alert-warning mt-3">{{ mensaje }}</div>
 {% endif %}

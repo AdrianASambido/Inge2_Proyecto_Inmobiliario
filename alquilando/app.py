@@ -269,7 +269,9 @@ def buscar_propiedad():
             cursor = conn.cursor()
 
             consulta = """
-                SELECT * FROM propiedad
+                SELECT id, dpto, piso, numero, calle, ciudad, provincia, descripcion, 
+                    precio_por_noche, capacidad_personas, tipo_propiedad
+                FROM propiedad
                 WHERE 
                     LOWER(dpto) LIKE %s OR
                     LOWER(piso) LIKE %s OR
@@ -301,19 +303,24 @@ def editar_propiedad(propiedad_id):
     cursor = conexion.cursor()
 
     if request.method == 'POST':
-        direccion = request.form['direccion']
+        calle = request.form['calle']
+        numero = request.form['numero']
+        piso = request.form.get('piso', '')
+        dpto = request.form.get('dpto', '')
         ciudad = request.form['ciudad']
         provincia = request.form['provincia']
         descripcion = request.form['descripcion']
-        # actualizar
+
+        # actualizar propiedad
         cursor.execute("""
             UPDATE propiedad
-            SET direccion=%s, ciudad=%s, provincia=%s, descripcion=%s
+            SET calle = %s, numero = %s, piso = %s, dpto = %s,
+                ciudad = %s, provincia = %s, descripcion = %s
             WHERE id = %s
-        """, (direccion, ciudad, provincia, descripcion, propiedad_id))
+        """, (calle, numero, piso, dpto, ciudad, provincia, descripcion, propiedad_id))
 
         # eliminar imágenes seleccionadas
-        ids_a_borrar = request.form.getlist('eliminar_imagen')
+        ids_a_borrar = request.form.getlist('eliminar_imagen[]')
         for id_img in ids_a_borrar:
             cursor.execute("DELETE FROM imagen WHERE id = %s", (id_img,))
 
@@ -325,18 +332,31 @@ def editar_propiedad(propiedad_id):
                 ruta = os.path.join(app.config['UPLOAD_FOLDER'], nombre)
                 img.save(ruta)
                 ruta_rel = os.path.join("img", nombre).replace("\\", "/")
-                cursor.execute("INSERT INTO imagen (url, propiedad_id) VALUES (%s, %s)", (ruta_rel, propiedad_id))
+                cursor.execute(
+                    "INSERT INTO imagen (url, propiedad_id) VALUES (%s, %s)",
+                    (ruta_rel, propiedad_id)
+                )
 
         conexion.commit()
-        flash("Propiedad actualizada.")
+        flash("Propiedad actualizada correctamente.")
         return redirect(url_for('buscar_propiedad'))
 
-    # GET: cargar propiedad
-    cursor.execute("SELECT direccion, ciudad, provincia, descripcion FROM propiedad WHERE id = %s", (propiedad_id,))
+    # GET: cargar datos actuales de la propiedad
+    cursor.execute("""
+        SELECT calle, numero, piso, dpto, ciudad, provincia, descripcion
+        FROM propiedad
+        WHERE id = %s
+    """, (propiedad_id,))
     datos = cursor.fetchone()
-    propiedad = dict(zip(['direccion', 'ciudad', 'provincia', 'descripcion'], datos))
 
-    # cargar imágenes
+    if not datos:
+        flash("Propiedad no encontrada.")
+        return redirect(url_for('buscar_propiedad'))
+
+    campos = ['calle', 'numero', 'piso', 'dpto', 'ciudad', 'provincia', 'descripcion']
+    propiedad = dict(zip(campos, datos))
+
+    # cargar imágenes actuales
     cursor.execute("SELECT id, url FROM imagen WHERE propiedad_id = %s", (propiedad_id,))
     imagenes = cursor.fetchall()
 
@@ -460,7 +480,7 @@ def ver_propiedades_encargado():
 #-------------------------------------------------------------------
 @app.route('/ver_propiedades')
 def ver_propiedades():
-    conn = get_db_connection()
+    conn = obtener_conexion()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM propiedad")  # o filtrá por encargado si lo necesitás
     propiedades = cursor.fetchall()
