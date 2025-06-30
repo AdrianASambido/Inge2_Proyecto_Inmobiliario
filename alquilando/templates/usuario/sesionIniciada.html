@@ -7,20 +7,19 @@
   <h2>Bienvenido/a {{ nombre }}</h2>
   <p class="lead">Has iniciado sesión como <strong>{{ tipo }}</strong>.</p>
 
-    <!--<div class="mt-4">
-  <a href="{{ url_for('editar_perfil') }}" class="btn btn-outline-primary me-2">Editar perfil</a>
-    <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar sesión</a>
-  </div>-->
+    <div class="mt-4">
+<a href="{{ url_for('usuario.editar_perfil') }}" class="btn btn-outline-primary me-2">Editar perfil</a>
+<a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Cerrar sesión</a>
+  </div>
 
   {% if tipo == 'cliente' %}
-    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-info mt-3">Menú</a>
+<a href="{{ url_for('usuario.pagina_inicio') }}" class="btn btn-info mt-3">Menú</a>
   {% elif tipo == 'encargado' %}
-    <a href="{{ url_for('menu_encargado') }}" class="btn btn-info mt-3">Menú</a>
+<a href="{{ url_for('encargado.menu_encargado') }}" class="btn btn-info mt-3">Menú</a>
   {% elif tipo == 'administrador' %}
-    <a href="{{ url_for('menu_administrador') }}" class="btn btn-info mt-3">Menú</a>
+<a href="{{ url_for('admin.menu_administrador') }}" class="btn btn-info mt-3">Menú</a>
   {% endif %}
 
-  <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
+<a href="{{ url_for('usuario.pagina_inicio') }}" class="btn btn-secondary mt-3">Volver al inicio</a>
 </div>
 {% endblock %}
-

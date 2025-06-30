@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Buscar Propiedad</h2>
-    <form method="POST" action="{{ url_for('buscar_propiedad') }}">
+<form method="POST" action="{{ url_for('admin.buscar_propiedad') }}">
         <div class="mb-3">
             <label for="termino" class="form-label">Buscar por dirección, ciudad, etc.</label>
             <input type="text" class="form-control" id="termino" name="termino" required>
@@ -35,7 +35,7 @@
                                 Capacidad: {{ propiedad[10] }} personas
                             </p>
                                 <!-- Botón para editar -->
-                            <form action="{{ url_for('editar_propiedad', propiedad_id=propiedad[0]) }}" method="get">
+                            <form action="{{ url_for('admin.editar_propiedad', propiedad_id=propiedad[0]) }}" method="get">
                                 <button type="submit" class="btn btn-outline-primary">Editar</button>
                             </form>
                         </div>

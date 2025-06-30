@@ -5,7 +5,7 @@
     <h2 class="text-center mb-2">Registro de Usuario</h2>
     <p class="text-center mb-3">Completa el formulario para crear tu cuenta.</p>
 
-    <form id="registroForm" method="POST" action="{{ url_for('registro_usuario') }}" novalidate>
+<form id="registroForm" method="POST" action="{{ url_for('auth.registro_usuario') }}" novalidate>
         <div class="mb-2">
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -66,7 +66,7 @@
         {% endwith %}
     </form>
 
-    <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary w-100 mt-2">Volver al inicio</a>
+<a href="{{ url_for('usuario.pagina_inicio') }}" class="btn btn-secondary w-100 mt-2">Volver al inicio</a>
 </div>
 
 <script>
@@ -113,4 +113,3 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% endblock %}
-

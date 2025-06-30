@@ -5,7 +5,7 @@
     <h2 class="text-center mb-2">Editar Perfil</h2>
     <p class="text-center mb-3">Modifica tus datos personales.</p>
 
-    <form id="editarForm" method="POST" action="{{ url_for('editar_perfil') }}" novalidate>
+<form id="editarForm" method="POST" action="{{ url_for('usuario.editar_perfil') }}" novalidate>
         <div class="mb-2">
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
@@ -65,7 +65,7 @@
         {% endwith %}
     </form>
 
-    <a href="{{ url_for('sesion_iniciada') }}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
+<a href="{{ url_for('auth.sesion_iniciada') }}" class="btn btn-secondary w-100 mt-2">Cancelar</a>
 </div>
 
 <script>

@@ -9,38 +9,38 @@
     <div class="d-grid gap-3 col-6 mx-auto">
 
         <!-- Ver listado general de propiedades -->
-        <form action="{{ url_for('listado_propiedades') }}" method="get">
+<form action="{{ url_for('encargado.listado_propiedades') }}" method="get">
             <input type="hidden" name="origen" value="administrador">
             <button type="submit" class="btn btn-primary btn-lg">Ver listado de propiedades</button>
         </form>
 
         <!-- Ver propiedades por encargado -->
-        <a href="{{ url_for('ver_propiedades_encargado') }}" class="btn btn-outline-primary btn-lg">
+        <a href="{{ url_for('admin.ver_propiedades_encargado') }}" class="btn btn-outline-primary btn-lg">
             Ver propiedades por encargado
         </a>
 
         <!-- Agregar encargado -->
-        <a href="{{ url_for('agregar_encargado') }}" class="btn btn-outline-success btn-lg">
+        <a href="{{ url_for('admin.agregar_encargado') }}" class="btn btn-outline-success btn-lg">
             Agregar encargado
         </a>
 
         <!-- Dar de alta propiedad -->
-        <a href="{{ url_for('dar_de_alta_propiedad') }}" class="btn btn-warning btn-lg">
+        <a href="{{ url_for('admin.dar_de_alta_propiedad') }}" class="btn btn-warning btn-lg">
             Dar de alta propiedad
         </a>
 
         <!-- Editar propiedad (primero buscar) -->
-        <a href="{{ url_for('buscar_propiedad') }}" class="btn btn-outline-warning btn-lg">
+        <a href="{{ url_for('admin.buscar_propiedad') }}" class="btn btn-outline-warning btn-lg">
             Editar propiedad existente
         </a>
 
         <!-- Volver al inicio -->
-        <a href="{{ url_for('pagina_inicio') }}" class="btn btn-secondary btn-lg">
+<a href="{{ url_for('usuario.pagina_inicio') }}" class="btn btn-secondary btn-lg">
             Volver al inicio
         </a>
     </div>
 
     <!-- Botón volver en parte inferior si querés mantenerlo -->
-    <a href="{{ url_for('menu_administrador') }}" class="btn btn-secondary mt-4">Volver</a>
+    <a href="{{ url_for('admin.menu_administrador') }}" class="btn btn-secondary mt-4">Volver</a>
 </div>
 {% endblock %}

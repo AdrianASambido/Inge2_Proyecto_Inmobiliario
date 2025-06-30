@@ -15,7 +15,7 @@
     {% endif %}
   {% endwith %}
 
-  <form method="POST" action="{{ url_for('login') }}">
+<form method="POST" action="{{ url_for('auth.login') }}">
     <div class="form-group mb-3">
       <label for="email">Correo electrónico</label>
       <input type="email" class="form-control" id="email" name="email" required>
@@ -30,11 +30,11 @@
   </form>
 
   <div class="text-center mt-3">
-    ¿No tienes cuenta? <a href="{{ url_for('registro_usuario') }}">Regístrate aquí</a>
+¿No tienes cuenta? <a href="{{ url_for('auth.registro_usuario') }}">Regístrate aquí</a>
   </div>
 
   <div class="text-center mt-2">
-    <a href="{{ url_for('recuperar_contraseña') }}">¿Olvidaste tu contraseña?</a>
+<a href="{{ url_for('auth.recuperar_contraseña') }}">¿Olvidaste tu contraseña?</a>
   </div>
 </div>
 {% endblock %}

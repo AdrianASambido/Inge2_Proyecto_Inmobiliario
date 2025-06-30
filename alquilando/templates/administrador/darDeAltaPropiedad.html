@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Dar de Alta una Propiedad</h2>
-    <form method="POST" action="{{ url_for('dar_de_alta_propiedad') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ url_for('admin.dar_de_alta_propiedad') }}" enctype="multipart/form-data">
         <fieldset class="border p-4 rounded">
             <legend class="w-auto px-2">Datos de la Propiedad</legend>
             <div class="row">
@@ -92,7 +92,7 @@
         <!-- Botones -->
         <div class="mt-3">
             <button type="submit" class="btn btn-success">Guardar Propiedad</button>
-            <a href="{{ url_for('menu_administrador') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="{{ url_for('admin.menu_administrador') }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>
