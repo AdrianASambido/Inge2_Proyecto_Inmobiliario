@@ -441,7 +441,7 @@ ALTER TABLE ONLY public.reserva ALTER COLUMN id SET DEFAULT nextval('public.rese
 --
 
 COPY public.administrador (id, nombre, apellido, email, password) FROM stdin;
-2	Carlos	Perez	carlos@admin.com,	admin456
+2	Carlos	Pérez	carlos@admin.com	admin456
 1	Lucía Anabela	Gómez	lucia@admin.com	admin123
 \.
 
