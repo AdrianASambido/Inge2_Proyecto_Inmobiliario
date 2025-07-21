@@ -1,85 +1,76 @@
 # 🏡 Alquilando
 
-**Alquilando** is a web application developed as part of the Software Engineering 2 course at the Facultad de Informática, UNLP. The project simulates a real-world platform for managing property rentals, connecting landlords and tenants in a secure and organized environment.
+**Alquilando** es una aplicación web desarrollada como parte de la materia Ingeniería de Software 2 en la Facultad de Informática, UNLP. El proyecto simula una plataforma real para la gestión de alquileres, conectando propietarios e inquilinos de forma segura y organizada.
 
-## 🚀 Features
+## 🚀 Funcionalidades
 
-*   **User Authentication:** Secure login and registration for landlords and tenants.
-*   **Property Management:** Landlords can list, update, and manage their properties.
-*   **Property Search:** Tenants can search and filter properties based on various criteria.
-*   **Rental Agreements:** Tools for managing rental contracts and agreements.
-*   **Messaging System:** Communication platform between landlords and tenants.
+*   **Autenticación de usuarios:** Registro e inicio de sesión seguro para propietarios e inquilinos.
+*   **Gestión de propiedades:** Los propietarios pueden listar, actualizar y administrar sus propiedades.
+*   **Búsqueda de propiedades:** Los inquilinos pueden buscar y filtrar propiedades según distintos criterios.
+*   **Gestión de contratos:** Herramientas para administrar contratos y acuerdos de alquiler.
+*   **Sistema de mensajería:** Comunicación entre propietarios e inquilinos.
 
-## 🛠️ Technologies Used
+## 🛠️ Tecnologías utilizadas
 
 *   **Backend:** Python, Flask
-*   **Database:** SQLite (for development), PostgreSQL (for production)
+*   **Base de datos:** SQLite (desarrollo), PostgreSQL (producción)
 *   **Frontend:** HTML, CSS, JavaScript
-*   **Deployment:** (To be specified, e.g., Docker, Heroku, AWS)
+*   **Despliegue:** (A definir, ej: Docker, Heroku, AWS)
 
-## ⚙️ Installation
+## ⚙️ Instalación
 
-To set up the project locally, follow these steps:
+Para instalar el proyecto localmente, sigue estos pasos:
 
-1.  **Clone the repository:**
+1.  **Clona el repositorio:**
     ```bash
     git clone https://github.com/your-username/alquilando.git
-    cd alquilando
+    cd Proyecto_Inmobiliario
     ```
-2.  **Create a virtual environment and activate it:**
+2.  **Crea y activa el entorno virtual (desde la raíz):**
     ```bash
     python -m venv venv
-    # On Windows
+    # En Windows
     .\venv\Scripts\activate
-    # On macOS/Linux
+    # En macOS/Linux
     source venv/bin/activate
     ```
-3.  **Install dependencies:**
+3.  **Instala las dependencias:**
     ```bash
-    pip install -r requirements.txt
+    pip install -r alquilando/requirements.txt
     ```
-4.  **Initialize the database:**
+4.  **Inicializa la base de datos:**
     ```bash
-    # Assuming you have a script or Flask command for this
-    flask init-db
+    # Según tu configuración, ejecuta el script SQL o usa un comando Flask
+    # Ejemplo:
+    psql -U postgres -d db_init_alquilando -f alquilando/data/db_init_alquilando.sql
     ```
-5.  **Run the application:**
-
-    To run the application, navigate to the root directory of the project (`C:\Facultad_Informatica\Proyecto_Inmobiliario`) and execute:
+5.  **Ejecuta la aplicación (desde la raíz):**
     ```bash
     python run.py
     ```
-    If Flask is not globally installed, ensure you activate the virtual environment first. From the `alquilando` directory:
-    ```bash
-    cd alquilando
-    .\venv\Scripts\activate  # On Windows
-    # source venv/bin/activate # On macOS/Linux
-    cd ..
-    python run.py
-    ```
 
-## 💡 Usage
+## 💡 Uso
 
-Once the application is running, navigate to `http://127.0.0.1:5000` (or `http://localhost:5000`) in your web browser.
+Una vez que la aplicación esté corriendo, navega a `http://127.0.0.1:5000` (o `http://localhost:5000`) en tu navegador web.
 
-*   **Landlords:** Register an account, log in, and start listing your properties.
-*   **Tenants:** Register an account, log in, and browse available properties.
+*   **Propietarios:** Registran una cuenta, inician sesión y publican sus propiedades.
+*   **Inquilinos:** Registran una cuenta, inician sesión y buscan propiedades disponibles.
 
-## 🤝 Contributing
+## 🤝 Contribuciones
 
-Contributions are welcome! Please follow these steps:
+¡Las contribuciones son bienvenidas! Por favor, sigue estos pasos:
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/YourFeature`).
-3.  Make your changes.
-4.  Commit your changes (`git commit -m 'Add some feature'`).
-5.  Push to the branch (`git push origin feature/YourFeature`).
-6.  Open a Pull Request.
+1.  Haz un fork del repositorio.
+2.  Crea una nueva rama (`git checkout -b feature/TuFeature`).
+3.  Realiza tus cambios.
+4.  Haz commit (`git commit -m 'Agrega una funcionalidad'`).
+5.  Haz push a la rama (`git push origin feature/TuFeature`).
+6.  Abre un Pull Request.
 
-## 📄 License
+## 📄 Licencia
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-## 📧 Contact
+## 📧 Contacto
 
-For any questions or inquiries, please contact [your-email@example.com](mailto:your-email@example.com).
+Por cualquier consulta, escribe a [your-email@example.com](mailto:your-email@example.com).
